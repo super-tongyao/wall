@@ -1,0 +1,35 @@
+{
+  "name": "wall",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build"
+  },
+  "dependencies": {
+    "ant-design-vue": "^3.2.10",
+    "axios": "^1.3.2",
+    "core-js": "^3.8.3",
+    "js-md5": "^0.7.3",
+    "nprogress": "^0.2.0",
+    "photoswipe": "^5.3.5",
+    "vue": "^3.2.13",
+    "vue-axios": "^3.4.1",
+    "vue-masonry": "^0.16.0",
+    "vue-router": "^4.1.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.16",
+    "@babel/eslint-parser": "^7.12.16",
+    "@vue/cli-plugin-babel": "~5.0.0",
+    "@vue/cli-plugin-eslint": "~5.0.0",
+    "@vue/cli-service": "~5.0.0",
+    "crypto-js": "^4.1.1"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}

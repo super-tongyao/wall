@@ -1,0 +1,30 @@
+# project prot
+server:
+  port: 9999
+
+# database config
+mysql:
+  database: wall
+  port: 3306
+  ip: 127.0.0.1
+  username: root
+  password: root
+
+# spring config
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${mysql.ip}:${mysql.port}/${mysql.database}?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2b8
+    username: ${mysql.username}
+    password: ${mysql.password}
+
+# file upload size
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+
+# MyBatis conf
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: cn.ityao.wall.entity
