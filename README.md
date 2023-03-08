@@ -20,7 +20,7 @@ Wall是一款快速分享资源应用程序。俗称“照片墙、视频墙”�
 
 Wall还有很多不足之处，比如部分移动端机型兼容等相关问题。
 
-或许你可以加入Wall团队，我们一起贡献代码。[申请加入](#参与贡献)
+或许你可以加入Wall团队，我们一起贡献代码。[申请加入](#共同协作)
 
 
 
@@ -32,6 +32,16 @@ Wall还有很多不足之处，比如部分移动端机型兼容等相关问题�
 | 其他成员待加入... | 其他成员待加入...                |
 
 ## 安装教程
+
+1、下载地址：[https://github.com/super-tongyao/wall/releases](https://github.com/super-tongyao/wall/releases)，以最新版为准。
+
+2、解压缩包，里面有两个文件夹，一个SQL脚本。
+
+![](https://img-blog.csdnimg.cn/02385e8546374571b45e70fab99c5333.png)
+
+- wall：编译好的前端页面。
+- wall-service-1.0.0：编译好的后端jar程序包。
+- wall.sql：后端数据库。
 
 ### 前端安装
 
