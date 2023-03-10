@@ -47,6 +47,16 @@ Wall还有很多不足之处，比如部分移动端机型兼容等相关问题�
 
 ## 安装教程
 
+1、下载地址：[https://github.com/super-tongyao/wall/releases](https://github.com/super-tongyao/wall/releases)，以最新版为准。
+
+2、解压缩包，里面有两个文件夹，一个SQL脚本。
+
+![](https://img-blog.csdnimg.cn/02385e8546374571b45e70fab99c5333.png)
+
+- wall：编译好的前端页面。
+- wall-service-1.0.0：编译好的后端jar程序包。
+- wall.sql：后端数据库。
+
 ### 前端安装
 
 前端安装推荐、建议使用nginx代理。在此使用nginx做文章配置。
