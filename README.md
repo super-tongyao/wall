@@ -14,22 +14,36 @@ Wall是一款快速分享资源应用程序。俗称“照片墙、视频墙”�
 
 - 后台管理：[https://demo-wall.ityao.cn/login](https://demo-wall.ityao.cn/login)，账号密码：admin/123456
 
-
 🌟如果这个项目让你有所收获，记得 Star 关注哦，这对我是非常不错的鼓励与支持。
+
+## 演示截图
+
+
+
+![](https://img-blog.csdnimg.cn/d90a3605852049e59e6129b6ea356d21.png)
+
+![](https://img-blog.csdnimg.cn/b09c6dd1af074f77ba17575a32a49f6e.png)
+
+![](https://img-blog.csdnimg.cn/42a33e6001104fda84fd2a66955cad90.png)
+
+![](https://img-blog.csdnimg.cn/f170a54d25f54aeaacf75aa62177f207.png)
+
+![](https://img-blog.csdnimg.cn/da2f0ec64c97424cae4e4c57e71d4488.png)
+
 ## 开发者名单
 
 Wall还有很多不足之处，比如部分移动端机型兼容等相关问题。
 
-或许你可以加入Wall团队，我们一起贡献代码。[申请加入](#参与贡献)
+或许你可以加入Wall团队，我们一起贡献代码。[申请加入](#共同协作)
 
 
 
-下面表格中出现你的头像及Github账号地址，视为Wall团队成员。
+下面表格中出现你的头像及GitHub账号地址，视为Wall团队成员。
 
-| 名称              | Github                           |
-| ----------------- | -------------------------------- |
-| Tongyao           | https://github.com/super-tongyao |
-| 其他成员待加入... | 其他成员待加入...                |
+| 名称          | Github                           |
+| ------------- | -------------------------------- |
+| Tongyao       | https://github.com/super-tongyao |
+| 期待你的入... | 期待你的入...                    |
 
 ## 安装教程
 
@@ -106,12 +120,21 @@ mysql:
 
 ## 更新日志
 
+#### 2023－03－10（v1.0.1）
+
+> 1. 修复上传点击标签归类时会唤起软键盘问题。
+> 2. 修复上传选择图后又删除或重新选择时选不了相册问题。
+> 3. 优化设置页面相应提示语。
+> 4. 优化部分页面样式效果。
+> 5. 优化上传选中标签时可见1个问题。
+
 #### 2023－03－07（v1.0.0）
-> 1.初始版本发布
+
+> 1. 初始版本发布
 
 ## 共同协作
 
-叙述并提交你的```480x480```个人生活照发送至邮箱：super_tongyao@163.com，成为Wall团队成员。
+叙述你的个人简介并发送至邮箱：super_tongyao@163.com，成为Wall团队成员。
 
 让我们一起让Wall变的更好。
 

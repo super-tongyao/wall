@@ -11,18 +11,19 @@
 
             <a-form-item name="coverType" label="封面选项" >
                 <a-radio-group v-model:value="resourceForm.coverType">
-                    <a-radio value="1" @click="coverUpload=false">自动识别封面</a-radio>
-                    <a-radio value="2" @click="coverUpload=true">上传封面</a-radio>
+                    <a-radio value="1" @click="coverFun(false)">自动识别封面</a-radio>
+                    <a-radio value="2" @click="coverFun(true)">上传封面</a-radio>
                 </a-radio-group>
             </a-form-item>
 
-            <div v-if="coverUpload == true">
+            <div v-if="coverUpload">
                 <a-form-item name="cover" label="上传封面" >
                     <a-upload v-model:file-list="resourceForm.cover"
                               listType="picture"
                               :max-count="1"
-                              before-upload="false"
+                              :before-upload="beforeUpload"
                               accept="image/png, image/jpeg,image/gif"
+                              id="coverFile"
                     >
                         <a-button>
                             <upload-outlined /> 选择封面图片
@@ -34,9 +35,10 @@
             <a-form-item name="tagId" label="标签归类" extra="为空时，默认归类全部类型标签。">
                 <a-select placeholder="标签归类"
                           allowClear="true" :max-tag-count="this.maxTagCount"
-                          v-model:value="resourceForm.tagId" mode="multiple">
+                          v-model:value="resourceForm.tagId" mode="multiple"
+                >
                     <template  v-for="(item, i) in tagList">
-                        <a-select-option :value="item.tagId">{{item.tagName}}</a-select-option>
+                        <a-select-option :value="item.tagId" >{{item.tagName}}</a-select-option>
                     </template>
                 </a-select>
 
@@ -52,9 +54,9 @@
                 <a-upload v-model:file-list="resourceForm.resource"
                           listType="picture"
                           :max-count="1"
-                          before-upload="false"
+                          :before-upload="beforeUpload"
                           :accept="accept"
-                          id="file"
+                          id="resourceFile"
                 >
                     <a-button>
                         <upload-outlined /> {{android == true ? accept == 'image/*' ? '选择图片' : '选择视频' : uploadName}}
@@ -122,8 +124,9 @@
 
         },
         mounted() {
+            document.getElementById("resourceFile").removeAttribute('capture')
 
-            document.getElementById("file").removeAttribute('capture')
+            document.getElementById("resourceForm_tagId").remove();
 
             var deviceName = navigator.userAgent.toLowerCase();
             if(deviceName.indexOf("iphone") != -1) {
@@ -170,7 +173,6 @@
                     this.resourceForm.cover = ref([]);
                     this.resourceForm.title = ""
                     this.uploadLoding = false;
-                    document.getElementById("file").removeAttribute('capture')
                     message.success('上传成功啦~');
                     this.NProgress.done()
                 }).catch(() => {
@@ -185,9 +187,30 @@
                 this.resourceForm.resource = ref([]);
                 this.resourceForm.cover = ref([]);
                 this.resourceForm.title = ""
-                document.getElementById("file").removeAttribute('capture')
+                if (this.coverUpload){
+                    document.getElementById("coverFile").removeAttribute('capture')
+                }
+                document.getElementById("resourceFile").removeAttribute('capture')
                 message.success('表单已重置！');
             },
+            coverFun(e){
+                this.coverUpload = e;
+                if (e){
+                    setTimeout(function () {
+                        document.getElementById("coverFile").removeAttribute('capture')
+                    })
+                }
+            },
+            beforeUpload(){
+                var that = this;
+                setTimeout(function () {
+                    if (that.coverUpload){
+                        document.getElementById("coverFile").removeAttribute('capture')
+                    }
+                    document.getElementById("resourceFile").removeAttribute('capture')
+                })
+                return false;
+            }
 
 
         }

@@ -22,7 +22,7 @@
             <a-input-number style="width: 100%" v-model:value="settingForm.expireDate" placeholder="令牌过期时间"></a-input-number>
         </a-form-item>
 
-        <a-form-item name="saveFilePath" label="文件保存位置" extra="图片、视频等其他文件保存的路径，文件没有会自动创建，谨慎修改。">
+        <a-form-item name="saveFilePath" label="文件保存位置" extra="图片、视频等其他文件保存的路径，文件没有会自动创建（谨慎修改）。重启服务生效。">
             <a-input v-model:value="settingForm.saveFilePath" placeholder="文件保存位置"></a-input>
         </a-form-item>
 

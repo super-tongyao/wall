@@ -4,8 +4,10 @@
             <div class="header-title">
                 <span @click="tests">{{option.homeTitle}}</span>
             </div>
-            <div style="float: right;height: 50px;line-height: 50px;">
-                <a style="margin: 0px 5px 0px 0px;color:#000" href="https://github.com/super-tongyao/wall" target="_blank"><github-outlined /> GitHub</a>
+            <div class="github-link">
+                <a-tooltip title="前往 Github" color="#1890ff" placement="bottom">
+                    <a href="https://github.com/super-tongyao/wall" target="_blank"><github-outlined /> GitHub</a>
+                </a-tooltip>
             </div>
             <a-menu theme="light" mode="horizontal" style="line-height: 50px;border: 0px" v-model:selectedKeys="selectedTag">
                 <a-menu-item key="" @click="load('')">
@@ -278,4 +280,21 @@
         bottom: 0px;
         margin: 0px 4% 3% 4%;
     }
+
+    .github-link{
+        float: right;
+        height: 50px;
+        line-height: 50px;
+    }
+
+    .github-link a:hover{
+        color: #1890ff;
+    }
+
+    .github-link a{
+        margin: 0px 5px 0px 0px;
+        color: #000
+    }
+
+
 </style>

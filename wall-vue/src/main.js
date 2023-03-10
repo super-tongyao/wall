@@ -26,7 +26,7 @@ app.config.globalProperties.$pub = pub;
 
 var deviceName = navigator.userAgent.toLowerCase();
 if (/android|iphone|webos|ipod|blackberry/.test(deviceName)) {
-    app.config.globalProperties.maxTagCount = 1;
+    app.config.globalProperties.maxTagCount = 2;
     app.config.globalProperties.waterfallWidth = 175;
     app.config.globalProperties.waterfallStyle = {
         overflow:'hidden',margin: '0px auto',width: '376px'
