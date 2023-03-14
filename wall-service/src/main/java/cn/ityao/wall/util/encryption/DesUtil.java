@@ -30,7 +30,9 @@ public class DesUtil {
     public static String encryption(String content) {
         try {
             KeyGenerator keygen = KeyGenerator.getInstance("AES");
-            keygen.init(128, new SecureRandom(salt.getBytes()));
+            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+            secureRandom.setSeed(salt.getBytes("UTF-8"));
+            keygen.init(secureRandom);
             SecretKey original_key = keygen.generateKey();
             byte[] raw = original_key.getEncoded();
             SecretKey key = new SecretKeySpec(raw, "AES");
