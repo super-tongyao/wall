@@ -38,7 +38,7 @@
                 </template>
 
                 <template v-if="column.key === 'coverPath'">
-                    <a-image style="border-radius: 5px" :previewMask="true" :width="60" :src="'/api/static'+text" alt="图片不存在"/>
+                    <a-image style="border-radius: 5px" :previewMask="true" :width="60" :src="'/api/static/'+text" alt="图片不存在"/>
                 </template>
 
                 <template v-if="column.key === 'resourceType'">

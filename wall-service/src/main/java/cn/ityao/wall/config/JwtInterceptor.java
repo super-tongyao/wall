@@ -29,7 +29,6 @@ public class JwtInterceptor implements HandlerInterceptor{
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("access_token");
 
-
         //tonken验证
         if (token == null || "null".equals(token)) {
             throw new Unauthorizedxception(401,"请先登录！");

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class TOptionController {
 
         String path = tOptionVo.getSaveFilePath();
         if (!path.substring(path.length()-1).equals("\\") && !path.substring(path.length()-1).equals("/")){
-            path = tOptionVo.getSaveFilePath()+"\\";
+            path = tOptionVo.getSaveFilePath()+ File.separator;
         }
         TOption saveFilePath = new TOption();
         saveFilePath.setOptionKey("saveFilePath");

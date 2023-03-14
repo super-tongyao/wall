@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.io.File;
+
 /**
  * wall-service >>> 【cn.ityao.wall.config】
  * 本地图片资源映射
@@ -23,6 +25,12 @@ public class ImageConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         String rootPath = itOptionService.getOption("saveFilePath");
+
+        // 判断目录是否存在，不在就创建
+        File file = new File(rootPath);
+        if(!file.exists()){
+            file.mkdirs();
+        }
         registry.addResourceHandler("/static/**").addResourceLocations("file:"+rootPath);
     }
 

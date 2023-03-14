@@ -122,7 +122,7 @@
                 data.secret = this.settingForm.secret;
 
                 post('/t-option/save',data).then((res) => {
-                    message.success('保存成功啦~');
+                    message.success('保存成功啦，部分设置需手动重启服务~');
                     this.NProgress.done()
                 }).catch(() => {});
             },

@@ -6,7 +6,7 @@ server:
 mysql:
   database: wall
   port: 3306
-  ip: 127.0.0.1
+  ip: 127.0.0.0
   username: root
   password: root
 
@@ -28,3 +28,6 @@ spring:
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: cn.ityao.wall.entity
+
+project-info:
+  version: @version@

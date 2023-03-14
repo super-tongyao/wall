@@ -40,7 +40,7 @@ public class FileUtils {
             IOUtils.closeQuietly(fileOutputStream);
             fileOutputStream.close();
         } catch (IOException e) {
-            log.error("存储文件异常："+e.getMessage());
+            throw new RuntimeException("存储文件异常，可能最近修改了文件存储路径，请重启Wall服务！");
         }
     }
 
@@ -62,7 +62,7 @@ public class FileUtils {
             encoder.encode(bufferedImage);
             fileOutputStream.close();
         } catch (IOException e) {
-            log.error("存储文件异常："+e.getMessage());
+            throw new RuntimeException("存储文件异常，可能最近修改了文件存储路径，请重启Wall服务！");
         }
     }
 

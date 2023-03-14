@@ -20,7 +20,7 @@ module.exports = defineConfig({
   pages: {
     index: {
       entry: 'src/main.js', // 入口文件
-      title: 'Wall资源共享平台'
+      title: 'Wall正在加载中...'
     }
   }
 })

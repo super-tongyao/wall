@@ -1,5 +1,7 @@
 package cn.ityao.wall.service.impl;
 
+import cn.hutool.core.exceptions.ExceptionUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.ityao.wall.entity.TResource;
 import cn.ityao.wall.mapper.TResourceMapper;
 import cn.ityao.wall.service.ITOptionService;
@@ -44,14 +46,7 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
     @Override
     public void uploadFileAndSave(TResource tResource, MultipartFile cover, MultipartFile resource, HttpServletRequest request) {
         FileUtils fileUtils = new FileUtils();
-        CompressUtils compressUtils = new CompressUtils();
         String saveFilePath = itOptionService.getOption("saveFilePath");
-
-        // 判断目录是否存在，不在就创建
-        File file = new File(saveFilePath);
-        if(!file.exists()){
-            file.mkdirs();
-        }
 
         // 资源后缀
         String resourceSuffix = fileUtils.getFileSuffix(resource).toLowerCase();
@@ -118,7 +113,7 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
                 try {
                     Thumbnails.of(coverPath).scale(0.50f).toFile(coverPath);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
                 }
             }else{
                 // 压缩图片
@@ -130,7 +125,7 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
                 try {
                     Thumbnails.of(coverPath).scale(0.50f).toFile(coverPath);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
                 }
             }
         }else{
@@ -147,18 +142,18 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
 
             // 在压缩
             try {
-                Thumbnails.of(coverPath).scale(0.25f).toFile(coverPath);
+                Thumbnails.of(coverPath).scale(0.50f).toFile(coverPath);
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
             }
         }
 
         String userName = (String) request.getAttribute("userName");
-        tResource.setCoverPath("/"+coverFileName);
+        tResource.setCoverPath(coverFileName);
         tResource.setVisibleFlag(true);
         tResource.setCreateBy(userName);
         tResource.setCreateTime(new Date());
-        tResource.setResourcePath("/"+resourceFileName);
+        tResource.setResourcePath(resourceFileName);
         tResource.setResourceType(resourceSuffix);
         this.save(tResource);
     }

@@ -3,6 +3,7 @@ ____    __    ____  ___       __       __
  \   \/    \/   / /  ^  \    |  |     |  |
   \            / /  /_\  \   |  |     |  |
    \    /\    / /  _____  \  |  `----.|  `----.
-    \__/  \__/ /__/     \__\ |_______||_______| v1.0.1
+    \__/  \__/ /__/     \__\ |_______||_______| v${project-info.version}
 
-Github开源地址: https://github.com/super-tongyao/wall
+GitHub开源地址: https://github.com/super-tongyao/wall
+

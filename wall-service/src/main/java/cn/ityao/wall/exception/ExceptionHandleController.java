@@ -2,6 +2,7 @@ package cn.ityao.wall.exception;
 
 import cn.hutool.core.exceptions.ExceptionUtil;
 import cn.ityao.wall.util.DataResult;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @ControllerAdvice
 @RestController
-@Slf4j
+@Log4j2
 public class ExceptionHandleController {
 
     @ExceptionHandler(value = Exception.class)
@@ -41,7 +42,7 @@ public class ExceptionHandleController {
             return ResponseEntity.status(unauthorizedxception.getCode())
                     .body(DataResult.setResult(unauthorizedxception.getCode(),unauthorizedxception.getMessage()));
         }
-        log.error("Wall后台出现代码异常："+ ExceptionUtil.stacktraceToString(e));
+        log.error(ExceptionUtil.stacktraceToString(e));
         return ResponseEntity.status(500)
                 .body(DataResult.setResult(500,e.getMessage()));
     }
