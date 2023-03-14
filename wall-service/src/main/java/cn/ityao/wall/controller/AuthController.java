@@ -6,6 +6,7 @@ import cn.ityao.wall.service.ITUserService;
 import cn.ityao.wall.util.DataResult;
 import cn.ityao.wall.util.TokenUtil;
 import cn.ityao.wall.util.encryption.DesUtil;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import java.util.Date;
  * @since 2023-02-14
  */
 @RestController
+@Log4j2
 public class AuthController {
 
     @Autowired
