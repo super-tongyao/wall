@@ -111,7 +111,7 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
                 fileUtils.writeFile(bufferedImage,coverPath);
 
                 try {
-                    Thumbnails.of(coverPath).scale(0.50f).toFile(coverPath);
+                    Thumbnails.of(coverPath).size(376, 600).toFile(coverPath);
                 } catch (IOException e) {
                     throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
                 }
@@ -123,7 +123,7 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
                 fileUtils.writeFile(resource,coverPath);
                 // 在压缩
                 try {
-                    Thumbnails.of(coverPath).scale(0.50f).toFile(coverPath);
+                    Thumbnails.of(coverPath).size(376, 600).toFile(coverPath);
                 } catch (IOException e) {
                     throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
                 }
@@ -142,7 +142,7 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
 
             // 在压缩
             try {
-                Thumbnails.of(coverPath).scale(0.50f).toFile(coverPath);
+                Thumbnails.of(coverPath).size(376, 600).toFile(coverPath);
             } catch (IOException e) {
                 throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
             }
@@ -204,5 +204,4 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
         }
         return 0;
     }
-
 }

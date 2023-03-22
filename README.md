@@ -55,7 +55,7 @@ Wall还有很多不足之处，比如部分移动端机型兼容等相关问题�
 ![](https://img-blog.csdnimg.cn/d41c213041d543ddacdc3b71f7a3a3ec.png)
 
 - wall：编译好的前端页面。
-- wall-service-1.0.0：编译好的后端jar程序包。
+- wall-service：编译好的后端jar程序包。
 - wall.sql：后端数据库。
 - startup.bat：Wall启动脚本。
 - stop.bat：Wall停止脚本。
@@ -114,7 +114,7 @@ nohup ./startup.sh r> /dev/null 2> /dev/null &
 
 ### 拓展配置（可选）
 
-主要简化Wall安装程序后的一些基本配置，如暂不需要，无需配置。
+主要简化Wall安装程序后的一些基本配置，如暂不需要，无需配置，其他更多配置，请参考[Nginx官网](http://nginx.org/en/docs/)文档。
 
 1、前端页面端口修改
 
@@ -138,7 +138,7 @@ server {
 
 2、修改后端服务端口
 
-默认端口为9999，修改wall-service/config/nginx.conf配置文件。并修改你的前端端口，本文设置为8080。
+默认端口为9999，修改wall-service/config/application.yml配置文件。并修改你的后端端口，本文设置为8080。
 
 ```
 # project prot
@@ -146,6 +146,30 @@ server:
   port: 8080
   
 ......
+```
+
+注意：如果你修改了后端服务端口，那么前端映射配置中，也需要修改映射后端服务端口，否则无法找到后端接口等问题。
+
+修改wall/config/nginx.conf配置文件。找到映射后端服务的/api，改为对应8080端口后，重启Wall即可。
+
+```
+server {
+	listen       80;
+	server_name  localhost;
+	......
+	
+	# 后端服务地址
+	location /api{
+		rewrite  ^/api/(.*)$ /$1 break;
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		
+		# 转发Wall的后台服务地址
+		proxy_pass   http://localhost:8080;
+	}
+	......
+}
 ```
 
 3、绑定域名
@@ -217,6 +241,13 @@ spring:
 ```
 
 ## 更新日志
+#### 2023－03－22（v2.0.2）
+
+> 1. 修复封面图片压缩算法。
+
+#### 2023－03－15（v2.0.1）
+
+> 1. 修复Linux系统下启动时相关小问题。
 
 #### 2023－03－14（v2.0.0）
 
