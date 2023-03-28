@@ -289,7 +289,7 @@ spring:
 - 扯皮瞎唠
 - 斗图摸鱼
 
-因为微信群分享时效限制，施行拉人入群，在此放入微信号，欢迎各位添加。
+因为微信群分享时效限制，施行拉人入群，在此放入微信（微信扫码，如图损坏，手动添加微信号：Byte880），欢迎各位添加。
 
 <img src="https://store.ityao.cn/api/image/friend/qrcode.png" alt="在这里插入图片描述" style="zoom:100%;" />
 

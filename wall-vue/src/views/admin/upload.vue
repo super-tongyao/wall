@@ -133,7 +133,7 @@
                 // 苹果
                 this.accept = "image/*,video/*";
             }else if(deviceName.indexOf("windows") != -1){
-                this.accept = ".jpg,.png,.gif,.mp4.mov";
+                this.accept = ".jpg,.png,.gif,.mp4,.mov";
             }else{
                 this.android = true;
                 this.accept = "image/*";

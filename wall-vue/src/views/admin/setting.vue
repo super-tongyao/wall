@@ -6,8 +6,8 @@
             <a-input v-model:value="settingForm.homeTitle" placeholder="首页标题"></a-input>
         </a-form-item>
 
-        <a-form-item name="tagId" label="首页展示标签" extra="打开首页时，第一展示的标签内容。">
-            <a-select placeholder="首页展示标签" allowClear="true"  v-model:value="settingForm.initTagId" >
+        <a-form-item name="tagId" label="首页展示标签" extra="打开首页时，第一展示的标签内容，为空时默认展示全部资源。">
+            <a-select placeholder="默认展示全部资源" allowClear="true"  v-model:value="settingForm.initTagId" >
                 <template  v-for="(item, i) in tagList">
                     <a-select-option :value="item.tagId">{{item.tagName}}</a-select-option>
                 </template>
