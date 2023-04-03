@@ -6,7 +6,7 @@ server:
 mysql:
   database: wall
   port: 3306
-  ip: 127.0.0.0
+  ip: localhost
   username: root
   password: root
 
