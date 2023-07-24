@@ -58,13 +58,42 @@
                     <a-switch :checked="text" @change="updateVisible(record)" />
                 </template>
 
-                <!--<template v-if="column.key === 'operation'">
+                <template v-if="column.key === 'operation'">
                     <a-space>
-                        <a href="javascript:" @click="editTag(record)">详情</a>
+                        <a href="javascript:" @click="editResource(record)">编辑</a>
                     </a-space>
-                </template>-->
+                </template>
             </template>
         </a-table>
+
+        <a-modal v-model:visible="editShow" title="编辑操作" :footer="null">
+            <a-form :model="editFrom" ref="tagForm" name="tagForm" :rules="editFromRules" :label-col="{style: {width: '80px',},}"  @finish="submitEdit">
+                <a-form-item name="title" label="资源标题">
+                    <a-input v-model:value="editFrom.title" placeholder="资源标题"></a-input>
+                </a-form-item>
+
+                <a-form-item name="tagId" label="标签归类" extra="为空时，默认归类全部类型标签。">
+                    <a-select placeholder="标签归类"
+                              allowClear="true" :max-tag-count="this.maxTagCount"
+                              v-model:value="editFrom.tagIds" mode="multiple"
+                    >
+                        <template  v-for="(item, i) in tagList">
+                            <a-select-option :value="item.tagId" >{{item.tagName}}</a-select-option>
+                        </template>
+                    </a-select>
+
+                </a-form-item>
+
+                <a-form-item style="margin-bottom: 0px">
+                    <div style="margin: 0px auto;width: 90px;">
+                        <a-button type="primary" html-type="submit" class="login-form-button">
+                            <form-outlined /> 保存资源
+                        </a-button>
+                    </div>
+                </a-form-item>
+            </a-form>
+        </a-modal>
+
     </a-space>
 </template>
 <script>
@@ -121,14 +150,13 @@
                         align:'center',
                         width: 120,
                     },
-                    /*{
+                    {
                         title: '操作',
-                        dataIndex: 'operation',
                         key: 'operation',
-                        width: 90,
+                        width:100,
                         align:'center',
                         fixed: 'right',
-                    },*/
+                    },
 
                 ],
                 dataSource: [],
@@ -143,7 +171,22 @@
 
                 checkedState:false,
                 deleteResourceId:"",
-                tagList:[]
+                tagList:[],
+                editFrom:{
+                    resourceId:"",
+                    title:"",
+                    tagIds:ref([])
+                },
+                editFromRules: {
+                    title: [
+                        {
+                            required: true,
+                            message: "标题描述还没输入呢",
+                            trigger: 'blur'
+                        }
+                    ]
+                },
+                editShow:false
 
             }
         },
@@ -153,6 +196,7 @@
             }).catch(() => {
             });
             this.searchTag()
+
         },
         methods:{
             checkedState(e){
@@ -162,7 +206,7 @@
                 console.log(e)
                 e.visibleFlag = !e.visibleFlag
 
-                post("/t-resource/update?resourceId="+e.resourceId+"&visibleFlag="+e.visibleFlag).then((res)=>{
+                post("/t-resource/updateState?resourceId="+e.resourceId+"&visibleFlag="+e.visibleFlag).then((res)=>{
                     console.log(res.data)
                 },(err) => {
 
@@ -214,7 +258,31 @@
                         })
                     },
                 });
-            }
+            },
+            editResource(e){
+                this.editShow = true;
+                var array = [];
+                if (e.tagId != ""){
+                    array = e.tagId.substring(0,e.tagId.length-1).split(",");
+                }
+                this.editFrom = {
+                    resourceId:e.resourceId,
+                    tagIds:ref(array),
+                    title:e.title,
+                }
+            },
+            submitEdit(){
+                this.NProgress.start()
+                post("/t-resource/update?resourceId="+this.editFrom.resourceId+"&title="+this.editFrom.title
+                    +"&tagIds="+this.editFrom.tagIds+",").then((res)=>{
+                    this.searchTag();
+                    this.editShow = false
+                    message.success("文件资源已修改");
+                    this.NProgress.done()
+                },(err) => {
+
+                })
+            },
         },
     });
 </script>

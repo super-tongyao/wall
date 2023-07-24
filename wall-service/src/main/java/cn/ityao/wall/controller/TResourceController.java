@@ -113,13 +113,28 @@ public class TResourceController extends SuperController {
         return DataResult.setSuccess(null);
     }
 
-    @PostMapping("/update")
-    public DataResult update(String resourceId, boolean visibleFlag, HttpServletRequest request){
+    @PostMapping("/updateState")
+    public DataResult updateState(String resourceId, boolean visibleFlag, HttpServletRequest request){
         String userName = (String) request.getAttribute("userName");
 
         TResource tResource = new TResource();
         tResource.setResourceId(resourceId);
         tResource.setVisibleFlag(visibleFlag);
+        tResource.setModifyBy(userName);
+        tResource.setModifyTime(new Date());
+        itResourceService.updateById(tResource);
+        return DataResult.setSuccess(null);
+    }
+
+
+    @PostMapping("/update")
+    public DataResult update(String resourceId, String title,String tagIds, HttpServletRequest request){
+        String userName = (String) request.getAttribute("userName");
+
+        TResource tResource = new TResource();
+        tResource.setResourceId(resourceId);
+        tResource.setTitle(title);
+        tResource.setTagId(tagIds);
         tResource.setModifyBy(userName);
         tResource.setModifyTime(new Date());
         itResourceService.updateById(tResource);

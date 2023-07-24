@@ -27,7 +27,7 @@
         </a-form-item>
 
         <a-form-item name="beian" label="网站备案号" extra="通过信管局正规备案的备案号，没有可以不设置。">
-            <a-input v-model:value="settingForm.beian" placeholder="网站正规备案号"></a-input>
+            <a-input v-model:value="settingForm.beian" placeholder="正规网站备案号"></a-input>
         </a-form-item>
 
         <a-form-item style="margin: 0px auto;width:90px;">
