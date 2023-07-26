@@ -40,11 +40,12 @@ Wall还有很多不足之处，比如部分移动端机型兼容等相关问题�
 
 下面表格中出现你的头像及GitHub账号地址，视为Wall团队成员。
 
-| 名称          | Github                           |
-| ------------- | -------------------------------- |
-| Tongyao       | https://github.com/super-tongyao |
-| Chen Shunhong | https://github.com/ChenShunhong  |
-| 期待你的入... | 期待你的入...                    |
+| 名称          | Github                            |
+| ------------- | --------------------------------- |
+| Tongyao       | https://github.com/super-tongyao  |
+| Chen Shunhong | https://github.com/ChenShunhong   |
+| Wang Tuanjie  | https://github.com/KingBoyAndGirl |
+| 期待你的入... | 期待你的入...                     |
 
 ## 安装教程
 
