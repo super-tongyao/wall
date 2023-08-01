@@ -69,5 +69,13 @@ public class TTag implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date modifyTime;
 
+    /** 密码 */
+    private String tagPassword;
 
+    /** 是否密码 */
+    private String tagPasswordFlag;
+
+    public void setTagPasswordBoolean(Boolean tagPasswordFlag) {
+        this.tagPasswordFlag = String.valueOf(tagPasswordFlag == true ? 1 : 0);
+    }
 }

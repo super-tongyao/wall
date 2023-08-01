@@ -41,6 +41,7 @@
                 <template v-if="column.key === 'operation'">
                     <a-space>
                         <a href="javascript:" @click="editTag(record)">编辑</a>
+                        <a href="javascript:" @click="encryptPassword(record)">加密</a>
                     </a-space>
                 </template>
             </template>
@@ -69,6 +70,23 @@
 
     </a-modal>
 
+    <a-modal v-model:visible="encryptPasswordModel" :title="tag+'操作'" :footer="null">
+      <a-form :model="tagForm" ref="tagForm" name="tagForm" :rules="tagFormTagPasswordRules" :label-col="{style: {width: '80px',},}"  @finish="submitEncryptPassword">
+        <a-form-item name="tagPassword" label="标签密码">
+          <a-input v-model:value="tagForm.tagPassword" placeholder="请输入密码"></a-input>
+        </a-form-item>
+
+        <a-form-item style="margin-bottom: 0px">
+          <div style="margin: 0px auto;width: 90px;">
+            <a-button type="primary" html-type="submit" class="login-form-button">
+              <form-outlined /> 保存密码
+            </a-button>
+          </div>
+        </a-form-item>
+      </a-form>
+
+    </a-modal>
+
 
 </template>
 <script>
@@ -87,7 +105,14 @@
                 tagForm:{
                     tagId:'',
                     tagName:"",
+                    tagPassword:"",
                     sort:1
+                },
+                tagFormTagPasswordRules: {
+                  tagPassword: [
+                      { required: true, message: "密码不能为空", trigger: "blur" },
+                    { min: 5, max: 20, message: '密码长度必须介于 5 和 20 之间', trigger: 'blur' }
+                  ]
                 },
                 tagFormRules: {
                     tagName: [
@@ -150,6 +175,7 @@
                     }
                 },
                 saveModel:false,
+                encryptPasswordModel:false,
                 tag:"",
                 deleteTagId:""
             }
@@ -176,6 +202,16 @@
                     sort:e.sort
                 }
             },
+            encryptPassword(e){
+              this.encryptPasswordModel = true;
+              this.tag = "加密";
+              this.tagForm = {
+                    tagId:e.tagId,
+                    tagPassword:e.tagPassword,
+                    tagName:e.tagName,
+                    sort:e.sort
+              }
+            },
             searchTag(pageNo,pageSize){
                 if(typeof pageNo == "undefined" || pageNo == "" ){
                     pageNo = this.pagination.current
@@ -201,6 +237,17 @@
                 },(err) => {
 
                 })
+            },
+            submitEncryptPassword(){
+              this.NProgress.start()
+              post("/t-tag/encryptPassword",this.tagForm).then((res)=>{
+                this.searchTag();
+                this.encryptPasswordModel = false
+                message.success("密码已保存");
+                this.NProgress.done()
+              },(err) => {
+
+              })
             },
             recordRowKey(e){
                 this.deleteTagId = e;

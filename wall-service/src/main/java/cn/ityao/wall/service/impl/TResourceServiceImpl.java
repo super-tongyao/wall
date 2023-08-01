@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * <p>
@@ -42,6 +43,13 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
 
     @Autowired
     private ITOptionService itOptionService;
+
+    @Autowired TResourceMapper tResourceMapper;
+
+    @Override
+    public List<TResource> selectAll(String tagId) {
+        return tResourceMapper.selectAll(tagId);
+    }
 
     @Override
     public void uploadFileAndSave(TResource tResource, MultipartFile cover, MultipartFile resource, HttpServletRequest request) {

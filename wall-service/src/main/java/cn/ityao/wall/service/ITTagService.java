@@ -13,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ITTagService extends IService<TTag> {
 
+    public Boolean matchesPassword(String tagId, String tagPassword);
 }

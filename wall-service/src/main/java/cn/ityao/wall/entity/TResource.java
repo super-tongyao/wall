@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.*;
 
 /**
  * <p>
@@ -104,5 +104,13 @@ public class TResource implements Serializable {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date modifyTime;
+
+    /** 密码 */
+    @TableField(exist = false)
+    private String password;
+
+    /** 标签 */
+    @TableField(exist = false)
+    private List<TTag> tags;
 
 }

@@ -30,8 +30,14 @@
                     <div id="pubuliu" class="pubuliu" v-masonry destroy-delay="3" transition-duration="0.3s" item-selector=".item" style="background-color: rgb(240 242 245 / 0%);margin-top: 20px;margin-bottom: 50px" >
                         <div v-masonry-tile class="item" v-for="(item, i) in dataList" style="margin: 6px;"
                              @mouseenter="moveIn(i)" @mouseleave="moveOut(i)" @click="visible = true">
-
-                            <div v-if="item.resourceType == 'mp4' || item.resourceType == 'mov'"  @click="palyVideo(item.resourcePath,item.title)">
+                            <div v-if="item.flag === true">
+                                <!--加密图片-->
+                                <img class="thumbnail" src="@/assets/password.svg" :width="this.waterfallWidth" :alt="item.title"/>
+                                <div class="img-text" ref="imgText">
+                                    {{item.title}}
+                                </div>
+                            </div>
+                            <div v-else-if="item.resourceType == 'mp4' || item.resourceType == 'mov'"  @click="palyVideo(item.resourcePath,item.title)">
                                 <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" />
                                 <div class="img-text" ref="imgText">
                                     {{item.title}}
@@ -120,6 +126,7 @@
 
             get("/t-tag/query").then((res)=>{
                 this.tagList = res.data
+
             })
 
             var that = this;
@@ -184,7 +191,7 @@
                 this.show.loading = true;
                 this.NProgress.start()
                 get("/t-resource/query?tagId="+tagId).then((res)=>{
-                    this.dataList = res.data;
+                    this.dataList = this.tagPasswordFun(res.data);
                     this.show.loading = false;
                     if (this.dataList == null || this.dataList.length == 0){
                         this.show.empty = true;
@@ -192,6 +199,18 @@
 
                     this.NProgress.done()
                 })
+            },
+            tagPasswordFun(data){
+                return data.map(item => {
+                    let flag = false;
+                    if (item.tags && item.tags.length > 0) {
+                        flag = item.tags.some(tag => tag.tagPasswordFlag === '1');
+                    }
+                    return {
+                        ...item,
+                        flag: flag
+                    };
+                });
             },
            /* test(i){
                 this.$refs.img[i].style="background-color:red;height:"+this.$refs.img[i].height+"px";

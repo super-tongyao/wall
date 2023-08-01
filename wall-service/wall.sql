@@ -80,6 +80,7 @@ CREATE TABLE `t_tag`  (
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `modify_by` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改者',
   `modify_time` datetime(0) NULL DEFAULT NULL COMMENT '修改时间',
+  `modify_by` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '修改者',
   PRIMARY KEY (`tag_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '标签表' ROW_FORMAT = Dynamic;
 
@@ -114,3 +115,8 @@ CREATE TABLE `t_user`  (
 INSERT INTO `t_user` VALUES ('0e191174de65f483d360f0d01e37aa65', 'admin', 'aFJjSQfE+pjqklRTjChVzrK5Ku1uLxkUWP0bwLXn5f5s4AdR1VgcRKwpAVCcGWpT', 1, NULL, NULL, NULL, 1, 'system', now(), NULL, NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+ALTER TABLE `wall`.`t_tag`
+    ADD COLUMN `tag_password` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '密码' AFTER `modify_time`,
+    ADD COLUMN `tag_password_flag` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '是否加密：0-未加密，1-加密' AFTER `tag_password`;

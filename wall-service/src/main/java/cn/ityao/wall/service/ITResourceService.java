@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -17,4 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 public interface ITResourceService extends IService<TResource> {
 
     public void uploadFileAndSave(TResource tResource, MultipartFile cover, MultipartFile resource, HttpServletRequest request);
+
+    List<TResource> selectAll(String tagId);
 }

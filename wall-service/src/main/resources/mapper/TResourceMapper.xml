@@ -2,4 +2,81 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.ityao.wall.mapper.TResourceMapper">
 
+
+    <resultMap id="BaseResultMap" type="cn.ityao.wall.entity.TResource">
+        <id property="resourceId" column="resource_id"/>
+        <result property="title" column="title"/>
+        <result property="coverType" column="cover_type"/>
+        <result property="coverPath" column="cover_path"/>
+        <result property="resourcePath" column="resource_path"/>
+        <result property="resourceWidth" column="resource_width"/>
+        <result property="resourceHeight" column="resource_height"/>
+        <result property="resourceType" column="resource_type"/>
+        <result property="tagId" column="tag_id"/>
+        <result property="visibleFlag" column="visible_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyBy" column="modify_by"/>
+        <result property="modifyTime" column="modify_time"/>
+
+        <collection property="tags" ofType="cn.ityao.wall.entity.TTag">
+        <id column="tt_tag_id" property="tagId"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="tag_sort" property="sort"/>
+        <result column="tag_create_by" property="createBy"/>
+        <result column="tag_create_time" property="createTime"/>
+        <result column="tag_modify_by" property="modifyBy"/>
+        <result column="tag_modify_time" property="modifyTime"/>
+        <result column="tag_password" property="tagPassword"/>
+        <result column="tag_password_flag" property="tagPasswordFlag"/>
+    </collection>
+    </resultMap>
+
+    <resultMap id="TTagResultMap" type="cn.ityao.wall.entity.TTag">
+        <id column="tag_id" property="tagId"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="tag_sort" property="sort"/>
+        <result column="tag_create_by" property="createBy"/>
+        <result column="tag_create_time" property="createTime"/>
+        <result column="tag_modify_by" property="modifyBy"/>
+        <result column="tag_modify_time" property="modifyTime"/>
+        <result column="tag_password" property="tagPassword"/>
+        <result column="tag_password_flag" property="tagPasswordFlag"/>
+    </resultMap>
+
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT tr.resource_id,
+        tr.title,
+        tr.cover_type,
+        tr.cover_path,
+        tr.resource_path,
+        tr.resource_width,
+        tr.resource_height,
+        tr.resource_type,
+        tr.tag_id,
+        tr.visible_flag,
+        tr.create_by,
+        tr.create_time,
+        tr.modify_by,
+        tr.modify_time,
+        tt.tag_id as tt_tag_id,
+        tt.tag_name,
+        tt.sort as tag_sort,
+        tt.create_by as tag_create_by,
+        tt.create_time as tag_create_time,
+        tt.modify_by as tag_modify_by,
+        tt.modify_time as tag_modify_time,
+        tt.tag_password,
+        IFNULL(tt.tag_password_flag, '0') as tag_password_flag
+        FROM t_resource tr
+        LEFT JOIN t_tag tt ON FIND_IN_SET(tt.tag_id, tr.tag_id)
+        WHERE tr.visible_flag != '0'
+        <if test="tagId != null and tagId != ''">
+            AND tt.tag_id = #{tagId}
+        </if>
+        ORDER BY tr.create_time
+    </select>
+
+
 </mapper>
