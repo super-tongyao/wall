@@ -54,10 +54,14 @@ public class TResourceController extends SuperController {
     @Autowired
     private ITTagService itTagService;
 
-    @PostMapping("/matchesPassword")
-    public DataResult matchesPassword(@Valid @RequestBody TResource tResource) {
-        String tagId = tResource.getTagId();
-        String password = tResource.getPassword();
+    @RequestMapping("/matchesPassword")
+    public DataResult matchesPassword(String tagId, String password) {
+        if(StringUtils.isBlank(tagId)){
+            throw new RuntimeException("标签id为空！");
+        }
+        if(StringUtils.isBlank(password)){
+            throw new RuntimeException("标签密码为空！");
+        }
         return DataResult.setSuccess(itTagService.matchesPassword(tagId, password));
     }
 

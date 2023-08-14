@@ -27,6 +27,7 @@ public class JwtConfig implements WebMvcConfigurer{
                 "/login",
                 "/t-tag/query",
                 "/t-resource/query",
+                "/t-resource/matchesPassword",
                 "/t-option/target",
                 "/static/**");
         registration.addPathPatterns("/**");

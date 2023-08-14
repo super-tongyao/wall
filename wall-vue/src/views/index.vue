@@ -13,13 +13,12 @@
                 <a-menu-item key="" @click="load('')">
                     全部
                 </a-menu-item>
-                <a-menu-item :key="item.tagId" v-for="(item, i) in tagList" @click="load(item.tagId)">
+                <a-menu-item :key="item.tagId" v-for="(item, i) in tagList" @click="load(item.tagId,item.tagPasswordFlag)">
                     {{item.tagName}}
                 </a-menu-item>
             </a-menu>
 
         </a-layout-header>
-
 
         <a-layout-content :style="this.waterfallStyle" id="galleryID" style="min-height: 300px;">
             <a-spin size="large" :spinning="show.loading" style="height: 300px">
@@ -27,15 +26,22 @@
                     <a-empty :image="simpleImage" description="亲，么的数据 ~" style="width:300px;margin:0px auto;margin-top: 50px"  />
                 </div>
                 <div v-else>
-                    <div id="pubuliu" class="pubuliu" v-masonry destroy-delay="3" transition-duration="0.3s" item-selector=".item" style="background-color: rgb(240 242 245 / 0%);margin-top: 20px;margin-bottom: 50px" >
+                    <div v-if="isModalVisible" class="modal">
+                        <div class="modal-content">
+                            <input type="text" v-model="inputValue" placeholder="请输入内容">
+                            <button @click="submitInput">确定</button>
+                            <button @click="closeModal">取消</button>
+                        </div>
+                    </div>
+                    <div v-if="!isModalVisible" id="pubuliu" class="pubuliu" v-masonry destroy-delay="3" transition-duration="0.3s" item-selector=".item" style="background-color: rgb(240 242 245 / 0%);margin-top: 20px;margin-bottom: 50px" disabled>
                         <div v-masonry-tile class="item" v-for="(item, i) in dataList" style="margin: 6px;"
                              @mouseenter="moveIn(i)" @mouseleave="moveOut(i)" @click="visible = true">
                             <div v-if="item.flag === true">
-                                <!--加密图片-->
-                                <img class="thumbnail" src="@/assets/password.svg" :width="this.waterfallWidth" :alt="item.title"/>
-                                <div class="img-text" ref="imgText">
-                                    {{item.title}}
-                                </div>
+                                                                <!--加密图片-->
+                                                                <img class="thumbnail" src="@/assets/password.svg" :width="this.waterfallWidth" :alt="item.title"/>
+                                                                <div class="img-text" ref="imgText">
+                                                                    {{item.title}}
+                                                                </div>
                             </div>
                             <div v-else-if="item.resourceType == 'mp4' || item.resourceType == 'mov'"  @click="palyVideo(item.resourcePath,item.title)">
                                 <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" />
@@ -49,7 +55,6 @@
                                    :data-pswp-width="item.resourceWidth"
                                    :data-pswp-height="item.resourceHeight"
                                    target="_blank" rel="noreferrer" >
-
                                     <!--<img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" :alt="item.title" ref="img" @load="test(i)"/>-->
                                     <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" :alt="item.title"/>
                                     <div class="img-text" ref="imgText">
@@ -88,6 +93,9 @@
         components: {footerIndex},
         data() {
             return {
+                tagId: '',
+                isModalVisible: false,
+                inputValue: '',
                 selectedTag:null,
                 tagList:[],
                 dataList:[],
@@ -185,20 +193,25 @@
                 this.video.show = true
                 this.video.title = title;
             },
-            load(tagId){
-                var that = this;
-                this.show.empty = false;
-                this.show.loading = true;
-                this.NProgress.start()
-                get("/t-resource/query?tagId="+tagId).then((res)=>{
-                    this.dataList = this.tagPasswordFun(res.data);
-                    this.show.loading = false;
-                    if (this.dataList == null || this.dataList.length == 0){
-                        this.show.empty = true;
-                    }
-
-                    this.NProgress.done()
-                })
+            load(tagId,tagPasswordFlag){
+                if(tagPasswordFlag=="1"){
+                    // -----1.弹出
+                    this.tagId = tagId;
+                    this.isModalVisible = true;
+                }else {
+                    this.show.empty = false;
+                    this.show.loading = true;
+                    this.NProgress.start()
+                    get("/t-resource/query?tagId=" + tagId).then((res) => {
+                        // this.dataList = res.data;
+                        this.dataList = this.tagPasswordFun(res.data);
+                        this.show.loading = false;
+                        if (this.dataList == null || this.dataList.length == 0) {
+                            this.show.empty = true;
+                        }
+                        this.NProgress.done()
+                    })
+                }
             },
             tagPasswordFun(data){
                 return data.map(item => {
@@ -211,6 +224,35 @@
                         flag: flag
                     };
                 });
+            },
+            // 显示加密标签
+            closeModal() {
+                this.isModalVisible = false;
+            },
+            submitInput() {
+                // 处理输入框中的内容
+                // -----2.验证
+                get("/t-resource/matchesPassword?tagId=" + this.tagId + "&password="+ this.inputValue).then((res) => {
+                    const isMatches = res.data;
+                    if (isMatches){
+                        // -----3.正确
+                        this.show.empty = false;
+                        this.show.loading = true;
+                        this.NProgress.start()
+                        get("/t-resource/query?tagId=" + this.tagId).then((res) => {
+                            this.dataList = res.data;
+                            this.show.loading = false;
+                            if (this.dataList == null || this.dataList.length == 0) {
+                                this.show.empty = true;
+                            }
+                            this.NProgress.done()
+                            this.closeModal();
+                        })
+                    }else {
+
+                    }
+                })
+
             },
            /* test(i){
                 this.$refs.img[i].style="background-color:red;height:"+this.$refs.img[i].height+"px";
@@ -314,6 +356,21 @@
         margin: 0px 5px 0px 0px;
         color: #000
     }
-
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+    }
 
 </style>
