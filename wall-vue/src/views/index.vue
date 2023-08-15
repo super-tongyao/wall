@@ -33,9 +33,22 @@
 
                             <div v-if="item.resourceType == 'mp4' || item.resourceType == 'mov'"  @click="palyVideo(item.resourcePath,item.title)">
                                 <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" />
-                                <div class="img-text" ref="imgText">
+                                <div class="img-text" ref="imgText" :title="item.title">
                                     {{item.title}}
                                 </div>
+                                <!--<div style="position: absolute;top: 35px;right: 50px;color: #fff;">
+                                    <play-circle-filled />
+                                </div>-->
+
+<!--                                <div style="position: absolute;top: 5px;right: 0px;color: #fff;opacity: 0.5">-->
+<!--                                    <a-tag color="blue" style="font-size: 2px;display: inline-block">视频</a-tag>-->
+<!--                                </div>-->
+
+                                <!--<div style="position: absolute;top: 5px;right: 0px;color: #fff;">
+                                    <a-tag color="green" style="font-size: 2px;display: inline-block">VR全景</a-tag>
+                                </div>-->
+
+
                             </div>
                             <div v-else>
                                 <a :key="item.resourceId"
@@ -46,7 +59,7 @@
 
                                     <!--<img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" :alt="item.title" ref="img" @load="test(i)"/>-->
                                     <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" :alt="item.title"/>
-                                    <div class="img-text" ref="imgText">
+                                    <div class="img-text" ref="imgText" :title="item.title">
                                         {{item.title}}
                                     </div>
                                 </a>
@@ -58,13 +71,19 @@
         </a-layout-content>
         <footerIndex />
     </a-layout>
-    <a-modal v-model:visible="video.show" :title="video.title" :footer="null" style="padding: 0px;" :width="this.videoWidth" destroyOnClose="true">
-        <video ishivideo="true" autoplay="true" isrotate="true" autoHide="true" controls="controls" style="width: 100%;margin: 0px">
+
+    <div class="video-model" v-if="video.show">
+        <div class="video-model-close" @click="videoClose"><close-outlined /></div>
+        <video ishivideo="true" autoplay="true" isrotate="true" autoHide="true" controls="controls" :style="this.videoWidthHeighut" class="video-model-video">
             <source :src="video.url" type="video/mp4" >
             <source :src="video.url" type="video/mov" >
             您的浏览器不支持视频播放
         </video>
-    </a-modal>
+        <div class="video-model-text">
+            <p :title="video.title">{{video.title}}</p>
+        </div>
+    </div>
+
 </template>
 
 <script>
@@ -193,9 +212,9 @@
                     this.NProgress.done()
                 })
             },
-           /* test(i){
-                this.$refs.img[i].style="background-color:red;height:"+this.$refs.img[i].height+"px";
-            }*/
+            videoClose(){
+                this.video.show = false;
+            }
         }
     })
 </script>
@@ -222,8 +241,7 @@
         position:absolute;
         bottom:0px;
         height:50px;
-        line-height:60px;
-        padding-left:15px;
+        line-height:55px;
         background: linear-gradient(180deg,transparent 0,rgba(0,0,0,.5) 91%);
         color: #fff;
         width: 100%;
@@ -234,30 +252,17 @@
         font-weight: 700;
         letter-spacing:1.5px;
         font-size: 1rem;
+
+        padding-left: 15px;
+        padding-right: 15px;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
     }
     .thumbnail{
         border-radius: 5px;
         overflow: hidden;
         transition-duration: 0.2s;
-    }
-
-    .ant-modal-header {
-        height: 30px;
-        line-height: 30px;
-        margin: 0px;
-        padding: 5px 0px 5px 10px;
-    }
-    .ant-modal-close-x{
-        height: 30px;
-        line-height: 30px;
-        width: 40px;
-    }
-
-    .ant-modal-title{
-    }
-
-    .ant-modal-body{
-        padding: 0px;
     }
 
     ::-webkit-scrollbar {
@@ -297,4 +302,55 @@
     }
 
 
+    .video-model{
+        position: fixed;
+        background-color: rgba(0, 0, 0, 0.8);
+        top: 0px;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        overflow: hidden;
+    }
+
+    .video-model-video{
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        z-index: 99999;
+        background: #000; /* 设置背景为灰色 */
+
+    }
+
+    .video-model-close{
+        position: absolute;
+        right: 20px;
+        font-size: 18px;
+        top: 15px;
+        color: #fff;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+    .video-model-text{
+        position: absolute;
+        bottom: 50px;
+        color: #fff;
+        font-size: 16px;
+        width: 100%;
+        height: 50px;
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    .video-model-text p{
+        line-height: 50px;
+        /*文字超过变...*/
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        cursor: pointer;
+    }
 </style>
