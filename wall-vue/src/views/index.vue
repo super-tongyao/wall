@@ -28,20 +28,20 @@
                 <div v-else>
                     <div v-if="isModalVisible" class="modal">
                         <div class="modal-content">
-                            <input type="text" v-model="inputValue" placeholder="请输入内容">
-                            <button @click="submitInput">确定</button>
-                            <button @click="closeModal">取消</button>
+                            <input v-if="!isPasswordVerified" type="text" v-model="inputValue" placeholder="请输入标签密码">
+                            <button v-if="!isPasswordVerified" @click="submitInput">确定</button>
+                            <button v-if="!isPasswordVerified" @click="closeModal">取消</button>
                         </div>
                     </div>
                     <div v-if="!isModalVisible" id="pubuliu" class="pubuliu" v-masonry destroy-delay="3" transition-duration="0.3s" item-selector=".item" style="background-color: rgb(240 242 245 / 0%);margin-top: 20px;margin-bottom: 50px" disabled>
                         <div v-masonry-tile class="item" v-for="(item, i) in dataList" style="margin: 6px;"
                              @mouseenter="moveIn(i)" @mouseleave="moveOut(i)" @click="visible = true">
                             <div v-if="item.flag === true">
-                                                                <!--加密图片-->
-                                                                <img class="thumbnail" src="@/assets/password.svg" :width="this.waterfallWidth" :alt="item.title"/>
-                                                                <div class="img-text" ref="imgText">
-                                                                    {{item.title}}
-                                                                </div>
+<!--                                                                &lt;!&ndash;加密图片&ndash;&gt;-->
+<!--                                                                <img class="thumbnail" src="@/assets/password.svg" :width="this.waterfallWidth" :alt="item.title"/>-->
+<!--                                                                <div class="img-text" ref="imgText">-->
+<!--                                                                    {{item.title}}-->
+<!--                                                                </div>-->
                             </div>
                             <div v-else-if="item.resourceType == 'mp4' || item.resourceType == 'mov'"  @click="palyVideo(item.resourcePath,item.title)">
                                 <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" />
@@ -93,6 +93,8 @@
         components: {footerIndex},
         data() {
             return {
+                isPasswordVerified: false, // 标记密码是否已验证过
+                lastVerificationTime: null, // 上次验证时间
                 tagId: '',
                 isModalVisible: false,
                 inputValue: '',
@@ -177,6 +179,17 @@
             },1000)
 
         },
+        created() {
+            // 从localStorage中读取验证状态和时间
+            const storedVerificationState = localStorage.getItem('isPasswordVerified');
+            const storedVerificationTime = localStorage.getItem('lastVerificationTime');
+            if (storedVerificationState === 'true') {
+                this.isPasswordVerified = true;
+            }
+            if (storedVerificationTime) {
+                this.lastVerificationTime = new Date(storedVerificationTime);
+            }
+        },
         methods: {
             loaded(instance ) {
                 console.log(instance);
@@ -197,7 +210,21 @@
                 if(tagPasswordFlag=="1"){
                     // -----1.弹出
                     this.tagId = tagId;
-                    this.isModalVisible = true;
+                    if (!this.isPasswordVerified){
+                        this.isModalVisible = true;
+                    }else {
+                        this.show.empty = false;
+                        this.show.loading = true;
+                        this.NProgress.start()
+                        get("/t-resource/query?tagId=" + tagId).then((res) => {
+                            this.dataList = res.data;
+                            this.show.loading = false;
+                            if (this.dataList == null || this.dataList.length == 0) {
+                                this.show.empty = true;
+                            }
+                            this.NProgress.done()
+                        })
+                    }
                 }else {
                     this.show.empty = false;
                     this.show.loading = true;
@@ -245,11 +272,18 @@
                             if (this.dataList == null || this.dataList.length == 0) {
                                 this.show.empty = true;
                             }
+                            // -----3.密码正确
+                            this.isPasswordVerified = true; // 设置密码已验证
+                            this.lastVerificationTime = new Date(); // 记录验证时间
+                            // 将验证状态和时间存储到localStorage中
+                            localStorage.setItem('isPasswordVerified', 'true');
+                            localStorage.setItem('lastVerificationTime', this.lastVerificationTime);
                             this.NProgress.done()
                             this.closeModal();
                         })
                     }else {
-
+                        // 密码错误，清空密码
+                        window.alert('密码错误，请重新输入');
                     }
                 })
 
