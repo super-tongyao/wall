@@ -52,11 +52,6 @@ public class TResource implements Serializable {
     private String resourcePath;
 
     /**
-     * 资源后缀类型
-     */
-    private String resourceType;
-
-    /**
      * 标签编号（可多个，以英文逗号隔开）
      */
     private String tagId;
