@@ -4,33 +4,8 @@
             <p style="margin-top: 10px">正在上传... <br> 请勿关闭或刷新页面</p>
         </template>
         <a-form :model="resourceForm" ref="resourceForm" name="resourceForm" :rules="resourceFormRules"
-                v-bind="{labelCol: {span: 6,},wrapperCol: {pan: 14,},}" @finish="submitData">
-            <a-form-item name="title" label="资源标题">
-                <a-input v-model:value="resourceForm.title" placeholder="资源标题"></a-input>
-            </a-form-item>
-
-            <a-form-item name="coverType" label="封面选项" >
-                <a-radio-group v-model:value="resourceForm.coverType">
-                    <a-radio value="1" @click="coverFun(false)">自动识别封面</a-radio>
-                    <a-radio value="2" @click="coverFun(true)">上传封面</a-radio>
-                </a-radio-group>
-            </a-form-item>
-
-            <div v-if="coverUpload">
-                <a-form-item name="cover" label="上传封面" >
-                    <a-upload v-model:file-list="resourceForm.cover"
-                              listType="picture"
-                              :max-count="1"
-                              :before-upload="beforeUpload"
-                              accept="image/png, image/jpeg,image/gif"
-                              id="coverFile"
-                    >
-                        <a-button>
-                            <upload-outlined /> 选择封面图片
-                        </a-button>
-                    </a-upload>
-                </a-form-item>
-            </div>
+                :label-col="{sm: {span: 5}}" :wrapper-col="{sm: { span: 15}}"
+                @finish="submitData">
 
             <a-form-item name="tagId" label="标签归类" extra="为空时，默认归类全部类型标签。">
                 <a-select placeholder="标签归类"
@@ -44,24 +19,91 @@
 
             </a-form-item>
 
-            <a-form-item name="fileType" label="上传的文件格式" v-if="android">
+            <a-form-item name="sourceType" label="资源来源">
+                <a-radio-group v-model:value="resourceForm.sourceType">
+                    <a-radio value="1" @click="uploadSource(true)">本地上传</a-radio>
+                    <a-radio value="2" @click="uploadSource(false)">图床URL</a-radio>
+                </a-radio-group>
+            </a-form-item>
+
+            <a-form-item name="fileType" label="上传格式" v-if="android">
                 <a-radio-group v-model:value="accept">
                     <a-radio value="image/*" @click="accept == 'image/*'">图片</a-radio>
                     <a-radio value="video/*" @click="accept == 'video/*'">视频</a-radio>
                 </a-radio-group>
             </a-form-item>
-            <a-form-item name="resource" label="上传文件" >
+
+
+            <a-form-item name="resource" label="上传文件" v-if="sourceToggle" >
+
                 <a-upload v-model:file-list="resourceForm.resource"
                           listType="picture"
-                          :max-count="1"
                           :before-upload="beforeUpload"
                           :accept="accept"
                           id="resourceFile"
+                          multiple="true"
+                          style="width: 100%;border: 1px red solid"
                 >
-                    <a-button>
+
+                    <a-button type="dashed" style="width: 100%;" >
                         <upload-outlined /> {{android == true ? accept == 'image/*' ? '选择图片' : '选择视频' : uploadName}}
                     </a-button>
+
+                    <template #itemRender="{ file, actions }">
+                        <div style="width: 100%;border: 1px red solid;margin-top: 5px;height: 66px;border: 1px #eee solid;border-radius: 5px">
+
+                            <a-row type="flex" :wrap="false">
+                                <a-col flex="66px">
+                                    <img width="50" height="50" :src="file.thumbUrl"
+                                         style=";margin-top: 7px;margin-left: 7px;border-radius: 3px"/>
+                                </a-col>
+                                <a-col flex="auto">
+                                    <a-input v-model:value="file.title" placeholder="描述一下发生的趣事吧~" style="margin-top: 17px;border: 0px" />
+                                </a-col>
+                                <a-col flex="45px">
+                                    <delete-outlined style="line-height: 66px;margin-left: 13px;cursor: pointer" @click="actions.remove"/>
+                                </a-col>
+                            </a-row>
+
+                        </div>
+                    </template>
                 </a-upload>
+
+            </a-form-item>
+            <a-form-item name="bedUrl" label="图床URL" v-else>
+                <a-button type="dashed" style="width: 100%;" @click="addBadUrl" >
+                    <plus-circle-outlined /> 添加一个图床URL
+                </a-button>
+
+                <div v-for="(item,i) in resourceForm.bedUrl">
+                    <div style="width: 100%;border: 1px red solid;margin-top: 5px;height: 66px;border: 1px #eee solid;border-radius: 5px">
+                        <a-row type="flex" :wrap="false">
+                            <a-col flex="66px">
+                                <a-image
+                                        :width="50" :height="50"
+                                        :src="item.img"
+                                        :preview="false"
+                                        :fallback="require('../../assets/error.png')"
+                                        style=";margin-top: 7px;margin-left: 7px;border-radius: 3px"
+                                />
+                            </a-col>
+                            <a-col flex="auto">
+                                <a-input v-model:value="item.title" size="small" :bordered="false" placeholder="描述一下发生的趣事吧~" style="outline:none;margin-top: 7px" />
+                                <a-input v-model:value="item.url" size="small" :bordered="false" placeholder="https://" style="margin-top: 7px;outline:none;"  @blur="echoImg(i)" />
+                            </a-col>
+                            <a-col flex="45px">
+                                <delete-outlined style="line-height: 66px;margin-left: 13px;cursor: pointer" @click="delBadUrl(i)" />
+                            </a-col>
+                        </a-row>
+                    </div>
+                </div>
+            </a-form-item>
+
+            <a-form-item name="resourceType" label="资源格式" extra="VR全景需要全景图片格式，可使用具备360度全景相机拍摄，如：影石 Insta 360 全景相机等。">
+                <a-radio-group v-model:value="resourceForm.resourceType">
+                    <a-radio value="1">普通资源</a-radio>
+                    <a-radio value="2">VR全景</a-radio>
+                </a-radio-group>
             </a-form-item>
 
             <a-form-item style="margin: 0px auto;width:202px;">
@@ -72,6 +114,7 @@
             </a-form-item>
         </a-form>
     </a-spin>
+
 
 </template>
 <script>
@@ -86,34 +129,48 @@
             return {
                 coverUpload:false,
                 resourceForm: {
-                    title: "",
-                    coverType: "1",
                     tagId:ref([]),
+                    sourceType: "1",
                     resource: ref([]),
-                    cover: ref([])
+                    bedUrl:[
+                        {
+                            img: require('@/assets/img.png'),
+                            title:'',
+                            url:''
+                        }
+                    ],
+                    resourceType:'1'
                 },
                 resourceFormRules: {
-                    title: [
+                    bedUrl: [
                         {
                             required: true,
                             validator: (rule, value, callback)=>{
-                                if(value == ""){
-                                    return Promise.reject("资源标题还没输入呢");
-                                }else if(value.length > 300){
-                                    return Promise.reject("标题长度不能超过300个字符");
-                                }else {
+                                var temp = false;
+                                for (var i = 0; i < value.length; i++) {
+                                    if(value[i].url == ""){
+                                        temp = true;
+                                        break;
+                                    }else{
+                                        temp = false;
+                                    }
+                                }
+                                if(temp){
+                                    return Promise.reject("请补齐图床URL");
+                                }else{
                                     return Promise.resolve();
                                 }
                             },
-                            trigger: 'blur'
+                            trigger: 'change'
                         }
-                    ]
+                    ],
                 },
                 uploadLoding:false,
                 tagList:[],
                 accept:"",
                 android:false,
-                uploadName:"选择图片/视频"
+                uploadName:"选择图片 / 视频",
+                sourceToggle:true
             };
         },
         created() {
@@ -125,52 +182,59 @@
         },
         mounted() {
             document.getElementById("resourceFile").removeAttribute('capture')
-
             document.getElementById("resourceForm_tagId").remove();
-
             var deviceName = navigator.userAgent.toLowerCase();
             if(deviceName.indexOf("iphone") != -1) {
                 // 苹果
                 this.accept = "image/*,video/*";
             }else if(deviceName.indexOf("windows") != -1){
-                this.accept = ".jpg,.png,.gif,.mp4,.mov";
+                this.accept = ".jpg,.png,.gif,.mp4,.mov,.wmv";
             }else{
                 this.android = true;
                 this.accept = "image/*";
                 this.uploadName = "选择图片";
             }
-
-
         },
         methods:{
             submitData () {
-                if(this.resourceForm.resource.length == 0){
+
+                console.log(this.resourceForm)
+
+                if(this.resourceForm.sourceType == "1" && this.resourceForm.resource.length == 0){
                     message.warning('你还没有选择要上传的图片或视频呢');
                     return false;
                 }
-                if(this.resourceForm.coverType == "2" &&  this.resourceForm.cover.length == 0){
-                    message.warning('请选择要上传的图片封面');
-                    return false;
-                }
+
                 this.uploadLoding = true;
 
                 this.NProgress.start()
                 const formData = new FormData();
-                formData.append('resource', this.resourceForm.resource[0].originFileObj);
-                if (this.resourceForm.coverType == "2"){
-                    formData.append('cover', this.resourceForm.cover[0].originFileObj);
-                }
-                formData.append('title', this.resourceForm.title);
-                formData.append('coverType', this.resourceForm.coverType);
                 if (this.resourceForm.tagId != ""){
                     formData.append('tagId', this.resourceForm.tagId+",");
                 }else{
                     formData.append('tagId', "");
                 }
+                formData.append('sourceType', this.resourceForm.sourceType);
+                formData.append('resourceFormat', this.resourceForm.resourceType);
+
+                if (this.resourceForm.sourceType == "1"){
+                    for (var i = 0; i < this.resourceForm.resource.length; i++) {
+                        formData.append('resource', this.resourceForm.resource[i].originFileObj);
+                        formData.append('title', this.resourceForm.resource[i].title);
+                    }
+                }else{
+                    var tempJson = this.resourceForm.bedUrl;
+                    for (var i = 0; i < this.resourceForm.bedUrl.length; i++) {
+                        delete tempJson[i].img;
+                    }
+                    formData.append('bedUrl', JSON.stringify(tempJson));
+                }
+
+
+                console.log(this.resourceForm.resource)
 
                 post('/t-resource/upload', formData).then(() => {
                     this.resourceForm.resource = ref([]);
-                    this.resourceForm.cover = ref([]);
                     this.resourceForm.title = ""
                     this.uploadLoding = false;
                     message.success('上传成功啦~');
@@ -181,38 +245,55 @@
 
             },
             resetForm(){
-                this.resourceForm.coverType = "1";
-                this.coverUpload = false;
                 this.resourceForm.tagId = ref([])
                 this.resourceForm.resource = ref([]);
                 this.resourceForm.cover = ref([]);
-                this.resourceForm.title = ""
                 if (this.coverUpload){
                     document.getElementById("coverFile").removeAttribute('capture')
                 }
                 document.getElementById("resourceFile").removeAttribute('capture')
                 message.success('表单已重置！');
             },
-            coverFun(e){
-                this.coverUpload = e;
-                if (e){
-                    setTimeout(function () {
-                        document.getElementById("coverFile").removeAttribute('capture')
-                    })
-                }
-            },
             beforeUpload(){
                 var that = this;
                 setTimeout(function () {
-                    if (that.coverUpload){
-                        document.getElementById("coverFile").removeAttribute('capture')
-                    }
                     document.getElementById("resourceFile").removeAttribute('capture')
                 })
                 return false;
+            },
+            addBadUrl(){
+                this.resourceForm.bedUrl.push({
+                    img: require('@/assets/img.png'),
+                    title:'',
+                    url:''
+                })
+            },
+            delBadUrl(index){
+                if (this.resourceForm.bedUrl.length > 1){
+                    this.resourceForm.bedUrl.splice(index,1)
+                }else{
+                    message.warn('这个删了还上传什么呀~');
+                }
+            },
+            echoImg(index){
+                this.resourceForm.bedUrl[index].img = this.resourceForm.bedUrl[index].url
+            },
+            uploadSource(flag){
+                this.sourceToggle = flag;
+                if (flag){
+                    var deviceName = navigator.userAgent.toLowerCase();
+                    this.android = (deviceName.indexOf('iphone') == -1 && deviceName.indexOf('windows') == -1)
+                }else{
+                    this.android = flag
+                }
             }
-
 
         }
     })
 </script>
+<style>
+
+    .ant-upload.ant-upload-select{
+        display: inline;
+    }
+</style>

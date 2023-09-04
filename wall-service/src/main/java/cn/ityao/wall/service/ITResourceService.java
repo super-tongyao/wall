@@ -16,5 +16,5 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface ITResourceService extends IService<TResource> {
 
-    public void uploadFileAndSave(TResource tResource, MultipartFile cover, MultipartFile resource, HttpServletRequest request);
+    public void uploadFileAndSave(TResource tResource, MultipartFile[] resource, HttpServletRequest request);
 }

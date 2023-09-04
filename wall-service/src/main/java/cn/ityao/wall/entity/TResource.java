@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -41,11 +42,6 @@ public class TResource implements Serializable {
     private String title;
 
     /**
-     * 封面类型（1、自动截取封面 2、上传封面）
-     */
-    private Integer coverType;
-
-    /**
      * 封面路径
      */
     private String coverPath;
@@ -56,16 +52,6 @@ public class TResource implements Serializable {
     private String resourcePath;
 
     /**
-     * 图片资源宽
-     */
-    private String resourceWidth;
-
-    /**
-     * 图片资源高
-     */
-    private String resourceHeight;
-
-    /**
      * 资源后缀类型
      */
     private String resourceType;
@@ -74,6 +60,16 @@ public class TResource implements Serializable {
      * 标签编号（可多个，以英文逗号隔开）
      */
     private String tagId;
+
+    /**
+     * 资源来源
+     */
+    private String sourceType;
+
+    /**
+     * 资源格式
+     */
+    private String resourceFormat;
 
     /**
      * 可见状态（1、为可见 0、为不可见）
@@ -105,4 +101,6 @@ public class TResource implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date modifyTime;
 
+    @TableField(exist = false)
+    private String bedUrl;
 }

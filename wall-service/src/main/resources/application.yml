@@ -1,14 +1,18 @@
 # project prot
 server:
   port: 9999
+  mvc:
+    throw-exception-if-no-handler-found: true # 告诉 SpringBoot 当出现 404 错误时, 直接抛出异常
+  resources:
+    add-mappings: false # 告诉 SpringBoot 不要为我们工程中的资源文件建立映射
 
 # database config
 mysql:
   database: wall
   port: 3306
-  ip: localhost
+  ip: 82.157.190.245
   username: root
-  password: root
+  password: Zty197368
 
 # spring config
 spring:

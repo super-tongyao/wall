@@ -34,7 +34,10 @@ if (/android|iphone|webos|ipod|blackberry/.test(deviceName)) {
     app.config.globalProperties.width = {
         width: '100%'
     };
-    app.config.globalProperties.videoWidth = '80%'
+    app.config.globalProperties.videoWidthHeighut = {
+        width: '300px',
+        height:'200px'
+    }
 }else{
     app.config.globalProperties.maxTagCount = 5;
     app.config.globalProperties.waterfallWidth = 372;
@@ -42,7 +45,10 @@ if (/android|iphone|webos|ipod|blackberry/.test(deviceName)) {
         overflow:'hidden',margin: '0px auto',width: '1537px'
     };
     app.config.globalProperties.width = {};
-    app.config.globalProperties.videoWidth = '30%'
+    app.config.globalProperties.videoWidthHeighut = {
+        width: '880px',
+        height:'500px'
+    }
 }
 
 

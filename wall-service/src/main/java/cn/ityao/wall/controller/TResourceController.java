@@ -10,7 +10,6 @@ import cn.ityao.wall.util.DataResult;
 import cn.ityao.wall.util.FileUtils;
 import cn.ityao.wall.util.StringUtils;
 import cn.ityao.wall.util.picture.CompressUtils;
-import cn.ityao.wall.util.video.VideoUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -47,11 +46,11 @@ public class TResourceController extends SuperController {
     private ITResourceService itResourceService;
 
     @PostMapping("/upload")
-    public DataResult upload(TResource tResource, MultipartFile cover, MultipartFile resource,HttpServletRequest request){
+    public DataResult upload(TResource tResource, MultipartFile[] resource,String[] title,HttpServletRequest request){
         if(resource == null){
             throw new RuntimeException("请上传图片或视频！");
         }
-        itResourceService.uploadFileAndSave(tResource,cover,resource,request);
+        itResourceService.uploadFileAndSave(tResource,resource,request);
         return DataResult.setSuccess(null);
     }
 

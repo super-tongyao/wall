@@ -9,7 +9,7 @@ import cn.ityao.wall.service.ITResourceService;
 import cn.ityao.wall.util.FileUtils;
 import cn.ityao.wall.util.StringUtils;
 import cn.ityao.wall.util.picture.CompressUtils;
-import cn.ityao.wall.util.video.VideoUtils;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Directory;
@@ -26,8 +26,7 @@ import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * <p>
@@ -43,119 +42,75 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
     @Autowired
     private ITOptionService itOptionService;
 
+    private FileUtils fileUtils = new FileUtils();
+
     @Override
-    public void uploadFileAndSave(TResource tResource, MultipartFile cover, MultipartFile resource, HttpServletRequest request) {
-        FileUtils fileUtils = new FileUtils();
+    public void uploadFileAndSave(TResource tResource, MultipartFile[] resource, HttpServletRequest request){
         String saveFilePath = itOptionService.getOption("saveFilePath");
 
-        // 资源后缀
-        String resourceSuffix = fileUtils.getFileSuffix(resource).toLowerCase();
-        if (resourceSuffix.equals("jpeg")){
-            resourceSuffix = "jpg";
-        }
-        if (!resourceSuffix.equals("jpg") && !resourceSuffix.equals("png") &&
-            !resourceSuffix.equals("gif") &&
-            !resourceSuffix.equals("mp4") && !resourceSuffix.equals("mov")){
-            throw new RuntimeException("图片或视频只支持jpg、png、gif、mp4、mov格式！");
-        }
+        // 只验证类型为1的本地上传资源类型包括视频类型
+        if (tResource.getSourceType().equals("1")){
+            localUploadSubffix(resource);
+        }else if(tResource.getSourceType().equals("2")){
 
-        // 统一声明好封面和资源的文件名
-        String uuid = StringUtils.getUUID();
-
-        // 封面文件名
-        String coverFileName = uuid +"_cover.jpg";
-        // 资源文件名
-        String resourceFileName = uuid + "." + resourceSuffix;
-
-        // 封面完整的存储路径
-        String coverPath = saveFilePath+coverFileName;
-        // 资源完整的存储路径
-        String resourcePath = saveFilePath+resourceFileName;
-
-        if (resourceSuffix.equals("mp4") || resourceSuffix.equals("mov")){
-            // 保存视频资源
-            fileUtils.writeFile(resource,resourcePath);
         }else{
-            // 保存图片资源
-            fileUtils.writeFile(resource,resourcePath);
-
-            try {
-                InputStream inputStream = resource.getInputStream();
-                BufferedImage bufferedImage = ImageIO.read(inputStream);
-                int rota = img(resourcePath);
-                if(rota == 0){
-                    tResource.setResourceWidth(bufferedImage.getWidth()+"");
-                    tResource.setResourceHeight(bufferedImage.getHeight()+"");
-                }else{
-                    tResource.setResourceWidth(bufferedImage.getHeight()+"");
-                    tResource.setResourceHeight(bufferedImage.getWidth()+"");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            throw new RuntimeException("未知来源格式！");
         }
 
-        // 判断是否是上传封面
-        if(tResource.getCoverType() == 1){
-            if(resourceSuffix.equals("mp4") || resourceSuffix.equals("mov")){
-                // 截取视频封面
-                /*BufferedImage bufferedImage = ToolVideo.getScreenshot(resourcePath);*/
+        // 此处不会验证图床URL
+        /*List<Map<String,String>> bedUrl = (List<Map<String,String>>) JSONObject.parse(tResource.getBedUrl());
+        for (int i = 0; i < bedUrl.size(); i++) {
+            System.out.println(bedUrl.get(i).get("url"));
+        }*/
 
-                VideoUtils videoUtils = new VideoUtils();
-                BufferedImage bufferedImage = videoUtils.getCover(resourcePath);
 
-                // 压缩图片
-                // bufferedImage = compressUtils.commpressPicture(bufferedImage);
-                // 保存图片封面
-                fileUtils.writeFile(bufferedImage,coverPath);
-
-                try {
-                    Thumbnails.of(coverPath).size(376, 600).toFile(coverPath);
-                } catch (IOException e) {
-                    throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
-                }
-            }else{
-                // 压缩图片
-                // BufferedImage bufferedImage = compressUtils.commpressPicture(resource);
-
-                // 保存图片封面
-                fileUtils.writeFile(resource,coverPath);
-                // 在压缩
-                try {
-                    Thumbnails.of(coverPath).size(376, 600).toFile(coverPath);
-                } catch (IOException e) {
-                    throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
-                }
-            }
-        }else{
-            String coverSuffix = fileUtils.getFileSuffix(cover);
-            if (!coverSuffix.equals("jpg") && !coverSuffix.equals("png") &&
-                !coverSuffix.equals("gif")){
-                throw new RuntimeException("封面图片只支持jpg、png、gif格式！");
-            }
-            // 压缩图片
-            /*BufferedImage bufferedImage = compressUtils.commpressPicture(cover);*/
-
-            // 保存图片封面
-            fileUtils.writeFile(cover,coverPath);
-
-            // 在压缩
-            try {
-                Thumbnails.of(coverPath).size(376, 600).toFile(coverPath);
-            } catch (IOException e) {
-                throw new RuntimeException("图片压缩出现异常："+ ExceptionUtil.stacktraceToString(e));
-            }
+        List<String> stringList = new ArrayList<>();
+        if (!tResource.getTitle().equals("")){
+            String[] str = tResource.getTitle().split(",");
+            stringList = Arrays.asList(str);
         }
+        try {
+            for (int i = 0; i < resource.length; i++) {
 
-        String userName = (String) request.getAttribute("userName");
-        tResource.setCoverPath(coverFileName);
-        tResource.setVisibleFlag(true);
-        tResource.setCreateBy(userName);
-        tResource.setCreateTime(new Date());
-        tResource.setResourcePath(resourceFileName);
-        tResource.setResourceType(resourceSuffix);
-        this.save(tResource);
+                // 统一声明好封面和资源的文件名
+                String uuid = StringUtils.getUUID();
+
+                // 封面文件名
+                String coverFileName = uuid +"_cover.jpg";
+
+                // 获取资源后缀
+                String resourceSuffix = fileUtils.getFileSuffix(resource[i].getOriginalFilename());
+
+                // 资源文件名
+                String resourceFileName = uuid + "." + resourceSuffix;
+
+                // 封面完整的存储路径
+                String coverPath = saveFilePath + coverFileName;
+                // 资源完整的存储路径
+                String resourcePath = saveFilePath + resourceFileName;
+
+                // 保存视频 或者 图片资源
+                fileUtils.writeFile(resource[i].getInputStream(),resourcePath);
+
+                // 获取视频 或者 图片资源 封面
+                fileUtils.writeCover(resourcePath,coverPath);
+
+                // 压缩封面
+                Thumbnails.of(resourcePath).scale(1).toFile(coverPath);
+
+                // 保存
+                String userName = (String) request.getAttribute("userName");
+                tResource.setCoverPath(coverFileName);
+                tResource.setVisibleFlag(true);
+                tResource.setCreateBy(userName);
+                tResource.setCreateTime(new Date());
+                tResource.setResourcePath(resourceFileName);
+                tResource.setResourceType(resourceSuffix);
+                this.save(tResource);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -203,5 +158,29 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
             }
         }
         return 0;
+    }
+
+    /**
+     * 验证本地上传图片或视频后缀
+     * @param resource
+     */
+    public void localUploadSubffix(MultipartFile[] resource){
+        boolean subffix = false;
+        for (int i = 0; i < resource.length; i++) {
+            // 资源后缀
+            String resourceSuffix = fileUtils.getFileSuffix(resource[i].getOriginalFilename());
+            if (resourceSuffix.equals("jpeg")){
+                resourceSuffix = "jpg";
+            }
+            if (!resourceSuffix.equals("jpg") && !resourceSuffix.equals("png") &&
+                    !resourceSuffix.equals("gif") && !resourceSuffix.equals("mp4") &&
+                    !resourceSuffix.equals("mov") && !resourceSuffix.equals("wmv")){
+                subffix = true;
+                break;
+            }
+        }
+        if (subffix){
+            throw new RuntimeException("图片或视频只支持jpg、png、gif、mp4、mov、wmv格式！");
+        }
     }
 }

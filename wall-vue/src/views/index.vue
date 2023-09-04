@@ -28,46 +28,58 @@
                 </div>
                 <div v-else>
                     <div id="pubuliu" class="pubuliu" v-masonry destroy-delay="3" transition-duration="0.3s" item-selector=".item" style="background-color: rgb(240 242 245 / 0%);margin-top: 20px;margin-bottom: 50px" >
-                        <div v-masonry-tile class="item" v-for="(item, i) in dataList" style="margin: 6px;"
-                             @mouseenter="moveIn(i)" @mouseleave="moveOut(i)" @click="visible = true">
+                        <a-image-preview-group>
+                            <div v-masonry-tile class="item" v-for="(item, i) in dataList" style="margin: 6px;"
+                                 @mouseenter="moveIn(i)" @mouseleave="moveOut(i)" @click="visible = true">
 
-                            <div v-if="item.resourceType == 'mp4' || item.resourceType == 'mov'"  @click="palyVideo(item.resourcePath,item.title)">
-                                <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" />
-                                <div class="img-text" ref="imgText" :title="item.title">
-                                    {{item.title}}
-                                </div>
-                                <!--<div style="position: absolute;top: 35px;right: 50px;color: #fff;">
-                                    <play-circle-filled />
-                                </div>-->
-
-<!--                                <div style="position: absolute;top: 5px;right: 0px;color: #fff;opacity: 0.5">-->
-<!--                                    <a-tag color="blue" style="font-size: 2px;display: inline-block">视频</a-tag>-->
-<!--                                </div>-->
-
-                                <!--<div style="position: absolute;top: 5px;right: 0px;color: #fff;">
-                                    <a-tag color="green" style="font-size: 2px;display: inline-block">VR全景</a-tag>
-                                </div>-->
-
-
-                            </div>
-                            <div v-else>
-                                <a :key="item.resourceId"
-                                   :data-pswp-src="'api/static/'+item.resourcePath"
-                                   :data-pswp-width="item.resourceWidth"
-                                   :data-pswp-height="item.resourceHeight"
-                                   target="_blank" rel="noreferrer" >
-
-                                    <!--<img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" :alt="item.title" ref="img" @load="test(i)"/>-->
-                                    <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" :alt="item.title"/>
+                                <div v-if="item.resourceType == 'mp4' || item.resourceType == 'mov'"  @click="palyVideo(item.resourcePath,item.title)">
+                                    <img :src="'api/static/'+item.coverPath" class="thumbnail" :width="this.waterfallWidth" />
                                     <div class="img-text" ref="imgText" :title="item.title">
                                         {{item.title}}
                                     </div>
-                                </a>
+                                    <!--<div style="position: absolute;top: 35px;right: 50px;color: #fff;">
+                                        <play-circle-filled />
+                                    </div>-->
+
+    <!--                                <div style="position: absolute;top: 5px;right: 0px;color: #fff;opacity: 0.5">-->
+    <!--                                    <a-tag color="blue" style="font-size: 2px;display: inline-block">视频</a-tag>-->
+    <!--                                </div>-->
+
+                                    <!--<div style="position: absolute;top: 5px;right: 0px;color: #fff;">
+                                        <a-tag color="green" style="font-size: 2px;display: inline-block">VR全景</a-tag>
+                                    </div>-->
+
+                                </div>
+                                <div v-else>
+
+
+                                    <a-image
+                                            :width="this.waterfallWidth"
+                                            :src="'api/static/'+item.coverPath"
+                                            :preview="{
+                                              src: 'api/static/'+item.resourcePath,
+                                            }"
+                                            :previewMask="false"
+                                            class="thumbnail" :alt="item.title"
+                                    />
+                                    <div class="img-text" ref="imgText" :title="item.title">
+                                        {{item.title}}
+                                    </div>
+
+
+
+
+                                </div>
                             </div>
-                        </div>
+                        </a-image-preview-group>
                     </div>
                 </div>
             </a-spin>
+
+
+
+
+
         </a-layout-content>
         <footerIndex />
     </a-layout>
@@ -83,6 +95,8 @@
             <p :title="video.title">{{video.title}}</p>
         </div>
     </div>
+
+
 
 </template>
 
@@ -142,40 +156,6 @@
             })
 
             var that = this;
-            if (!this.lightbox) {
-                this.lightbox = new PhotoSwipeLightbox({
-                    gallery: '#galleryID',
-                    children: 'a',
-                    pswpModule: () => import('photoswipe'),
-                });
-                that.lightbox.on('uiRegister', function() {
-                    that.lightbox.pswp.ui.registerElement({
-                        name: 'custom-caption',
-                        order: 9,
-                        isButton: false,
-                        appendTo: 'root',
-                        onInit: (el, pswp) => {
-                            that.lightbox.pswp.on('change', () => {
-                                const currSlideElement = that.lightbox.pswp.currSlide.data.element;
-                                let captionHTML = '';
-                                if (currSlideElement) {
-                                    const hiddenCaption = currSlideElement.querySelector('.hidden-caption-content');
-                                    if (hiddenCaption) {
-                                        // get caption from element with class hidden-caption-content
-                                        captionHTML = hiddenCaption.innerHTML;
-                                    } else {
-                                        // get caption from alt attribute
-                                        captionHTML = currSlideElement.querySelector('img').getAttribute('alt');
-                                    }
-                                }
-                                el.innerHTML = captionHTML || '';
-                            });
-                        }
-                    });
-                });
-                this.lightbox.init();
-            }
-            var that = this;
             setInterval(function () {
                 that.$redrawVueMasonry()
             },1000)
@@ -214,7 +194,7 @@
             },
             videoClose(){
                 this.video.show = false;
-            }
+            },
         }
     })
 </script>
@@ -273,17 +253,6 @@
     body{
         background: rgb(240,242,245);
         cursor: url('@/assets/pointer.cur'),auto!important;
-    }
-
-    .pswp__custom-caption {
-        /*background: rgba(0, 0, 0, 0.75);*/
-        font-size: 16px;
-        color: #fff;
-        position: absolute;
-        left: 0px;
-        right: 0px;
-        bottom: 0px;
-        margin: 0px 4% 3% 4%;
     }
 
     .github-link{

@@ -43,7 +43,6 @@ Wall还有很多不足之处，比如部分移动端机型兼容等相关问题�
 | 名称          | Github                            |
 | ------------- | --------------------------------- |
 | Tongyao       | https://github.com/super-tongyao  |
-| Chen Shunhong | https://github.com/ChenShunhong   |
 | Wang Tuanjie  | https://github.com/KingBoyAndGirl |
 | 期待你的入... | 期待你的入...                     |
 
@@ -275,27 +274,26 @@ spring:
 
 ## 共同协作
 
-根据下列模板，编辑修改：
+参与共同协作会得到什么？
+
+- 你会出现在Wall开源人员贡献列表。
+
+根据下列模板修改并回答问题：
 
 - 擅长技术：你熟悉和擅长的技术。
 
-- GitHub主页地址：你的GitHub主页地址。
+- GitHub主页地址：你的GitHub主页地址（用于展示跳转你的主页）。
 
-- 原因理由：申请加入Wall团队原因和理由。
+- 如何理解开源？：你如何理解开源思想和想法。
 
 
-并发送至邮箱：super_tongyao@163.com，通过后成为Wall团队成员，让我们一起把Wall变的更好。
+并发送至邮箱：super_tongyao@163.com，留意邮箱回信，让我们一起把Wall变的更好。
 
 ## 技术讨论
 
-微信讨论群，此群主要以下为主题：
+Wall微信讨论群欢迎扫码（如图损坏，手动添加微信号：Byte880），欢迎各位添加：
 
-- 讨论技术（Java为主）
-- 分享底层原理（Java为主）
-- 扯皮瞎唠
-- 斗图摸鱼
 
-欢迎扫码（如图损坏，手动添加微信号：Byte880），欢迎各位添加。
 
 <img src="https://store.ityao.cn/api/image/friend/qrcode.png" alt="在这里插入图片描述" style="zoom:100%;" />
 

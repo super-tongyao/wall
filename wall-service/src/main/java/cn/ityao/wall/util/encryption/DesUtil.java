@@ -94,7 +94,7 @@ public class DesUtil {
 
     public static void main(String[] args) {
         DesUtil se = new DesUtil();
-        Scanner scanner = new Scanner(System.in);
+         Scanner scanner = new Scanner(System.in);
 
         /*
          * 加密

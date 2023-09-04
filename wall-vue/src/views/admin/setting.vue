@@ -1,6 +1,7 @@
 <template>
     <a-form :model="settingForm" ref="settingForm" name="settingForm"
-            :rules="settingFormRules" v-bind="{labelCol: {span: 6,},wrapperCol: {pan: 14,},}" @finish="submitData">
+            :rules="settingFormRules"
+            :label-col="{sm: {span: 5}}" :wrapper-col="{sm: { span: 15}}" @finish="submitData">
 
         <a-form-item name="homeTitle" label="首页标题">
             <a-input v-model:value="settingForm.homeTitle" placeholder="首页标题"></a-input>
@@ -30,6 +31,19 @@
             <a-input v-model:value="settingForm.beian" placeholder="正规网站备案号"></a-input>
         </a-form-item>
 
+        <a-form-item name="beian" label="封面压缩比例" extra="上传图片或者视频文件时识别封面后压缩封面的比例（取值范围：0.1 - 1.0，从差到好，数值越小封面体积越小，封面也就加载越快）。">
+            <a-slider :min="0.1" :max="1.0" :step="0.1"
+                    v-model:value="settingForm.coverCompress"
+                    :marks="{0.1: '模糊',0.3: '一般',0.5: '中等',0.7: '推荐',1.0: '无压缩'}"
+            />
+        </a-form-item>
+        <a-form-item name="layout" label="展示布局" extra="首页以及个标签下资源展示布局。">
+            <a-radio-group v-model:value="settingForm.layout">
+                <a-radio value="1">瀑布流</a-radio>
+                <a-radio value="2">平铺（推荐）</a-radio>
+            </a-radio-group>
+        </a-form-item>
+
         <a-form-item style="margin: 0px auto;width:90px;">
             <a-button type="primary" html-type="submit"><form-outlined /> 保存设置</a-button>
         </a-form-item>
@@ -50,7 +64,9 @@
                     beian: "",
                     secret:"",
                     expireDate:"",
-                    initTagId:ref()
+                    initTagId:ref(),
+                    coverCompress:ref(0.9),
+                    layout: "2"
                 },
                 settingFormRules: {
                     homeTitle: [

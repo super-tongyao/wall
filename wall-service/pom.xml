@@ -119,8 +119,8 @@
         <!--缩略图依赖-->
         <dependency>
             <groupId>org.bytedeco</groupId>
-            <artifactId>javacv</artifactId>
-            <version>0.8</version>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.6</version>
         </dependency>
 
         <dependency>
