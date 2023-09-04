@@ -9,6 +9,7 @@ import cn.ityao.wall.util.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.tasks.UnsupportedFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,31 +38,15 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
     private String resourceFileName = "";
     private String resourcePath = "";
 
+    private List<String> titles = new ArrayList<>();
+    private List<Map<String,String>> bedUrl = null;
+
     @Override
     public void uploadFileAndSave(TResource tResource, MultipartFile[] resource, HttpServletRequest request){
         String saveFilePath = itOptionService.getOption("saveFilePath");
 
-        List<String> titles = new ArrayList<>();
-        List<Map<String,String>> bedUrl = null;
-
-        // 只验证类型为1的本地上传资源类型包括视频类型
-        if (tResource.getSourceType().equals("1")){
-            localUploadSubffix(resource);
-            // 处理资源标题
-            if (!tResource.getTitle().equals("")){
-                String[] title = tResource.getTitle().split(",");
-                titles = Arrays.asList(title);
-            }
-        }else if(tResource.getSourceType().equals("2")){
-            // 此处不会验证图床URL
-            bedUrl = (List<Map<String,String>>) JSONObject.parse(tResource.getBedUrl());
-            // 处理图床标题
-            for (int i = 0; i < bedUrl.size(); i++) {
-                titles.add(bedUrl.get(i).get("title"));
-            }
-        }else{
-            throw new RuntimeException("未知来源格式！");
-        }
+        // 加载处理标题
+        lodingTitle(tResource,resource);
 
         // 开始保存处理数据
         try {
@@ -71,7 +56,6 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
 
                 // 封面文件名
                 String coverFileName = uuid + "_cover.jpg";
-
                 if (tResource.getSourceType().equals("1")){
                     // 获取资源后缀
                     resourceSuffix = fileUtils.getFileSuffix(resource[i].getOriginalFilename());
@@ -113,7 +97,11 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
                 this.save(tResource);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            if (e instanceof UnsupportedFormatException){
+                throw new RuntimeException("图床URL上传有不支持的格式！");
+            }else{
+                throw new RuntimeException("未知异常："+e.getMessage());
+            }
         }
     }
 
@@ -139,5 +127,33 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
         if (subffix){
             throw new RuntimeException("图片或视频只支持jpg、png、gif、mp4、mov、wmv格式！");
         }
+    }
+
+    /**
+     * 验证加载处理标题
+     * @param tResource
+     * @param resource
+     * @return
+     */
+    public List<String> lodingTitle(TResource tResource,MultipartFile[] resource){
+        // 只验证类型为1的本地上传资源类型包括视频类型
+        if (tResource.getSourceType().equals("1")){
+            localUploadSubffix(resource);
+            // 处理资源标题
+            if (!tResource.getTitle().equals("")){
+                String[] title = tResource.getTitle().split(",");
+                titles = Arrays.asList(title);
+            }
+        }else if(tResource.getSourceType().equals("2")){
+            // 此处不会验证图床URL
+            bedUrl = (List<Map<String,String>>) JSONObject.parse(tResource.getBedUrl());
+            // 处理图床标题
+            for (int i = 0; i < bedUrl.size(); i++) {
+                titles.add(bedUrl.get(i).get("title"));
+            }
+        }else{
+            throw new RuntimeException("未知来源格式！");
+        }
+        return titles;
     }
 }
