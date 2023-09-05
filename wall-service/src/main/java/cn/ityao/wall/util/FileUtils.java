@@ -60,9 +60,10 @@ public class FileUtils {
      * @param resourcePath
      * @param coverPath
      */
-    public void writeCover(String resourcePath,String coverPath){
+    public String writeCover(String resourcePath,String coverPath){
         InputStream inputStream = null;
         String contentType = null;
+        String resourceType = "0";
         try {
             // 看是本地上传还是图床URL
             if (resourcePath.indexOf("http") != -1){
@@ -77,8 +78,10 @@ public class FileUtils {
             // 看是视频还是图片
             if (contentType.startsWith("image/")) {
                 // 这里不要问为什么不写，因为不想写 - -
+                resourceType = "1";
             } else if (contentType.startsWith("video/")) {
                 inputStream = videoCover(inputStream,2);
+                resourceType = "2";
             }else{
                 throw new RuntimeException("未知的资源存储类型：" + contentType);
             }
@@ -92,6 +95,7 @@ public class FileUtils {
             } catch (IOException e) {
                 throw new RuntimeException(ExceptionUtil.stacktraceToString(e));
             }
+            return resourceType;
         }
     }
 

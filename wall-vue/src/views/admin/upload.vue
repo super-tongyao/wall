@@ -83,7 +83,7 @@
                                         :width="50" :height="50"
                                         :src="item.img"
                                         :preview="false"
-                                        :fallback="require('../../assets/error.png')"
+                                        :fallback="require('../../assets/img.png')"
                                         style=";margin-top: 7px;margin-left: 7px;border-radius: 3px"
                                 />
                             </a-col>
@@ -197,16 +197,11 @@
         },
         methods:{
             submitData () {
-
-                console.log(this.resourceForm)
-
                 if(this.resourceForm.sourceType == "1" && this.resourceForm.resource.length == 0){
                     message.warning('你还没有选择要上传的图片或视频呢');
                     return false;
                 }
-
                 this.uploadLoding = true;
-
                 this.NProgress.start()
                 const formData = new FormData();
                 if (this.resourceForm.tagId != ""){
@@ -234,6 +229,7 @@
                 console.log(this.resourceForm.resource)
 
                 post('/t-resource/upload', formData).then(() => {
+                    this.resourceForm.bedUrl = [];
                     this.resourceForm.resource = ref([]);
                     this.resourceForm.title = ""
                     this.uploadLoding = false;

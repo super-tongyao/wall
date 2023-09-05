@@ -41,6 +41,8 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
     private List<String> titles = new ArrayList<>();
     private List<Map<String,String>> bedUrl = null;
 
+    private String prefixUrl = "api/static/";
+
     @Override
     public void uploadFileAndSave(TResource tResource, MultipartFile[] resource, HttpServletRequest request){
         String saveFilePath = itOptionService.getOption("saveFilePath");
@@ -69,18 +71,18 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
                     // 保存视频 或者 图片资源
                     fileUtils.writeFile(resource[i].getInputStream(),resourcePath);
 
-                    tResource.setResourcePath(resourceFileName);
+                    tResource.setResourcePath(prefixUrl + resourceFileName);
                 }else{
                     // - -
                     resourcePath = bedUrl.get(i).get("url");
-                    resourceFileName = resourcePath;
+                    tResource.setResourcePath(resourcePath);
                 }
 
                 // 封面完整的存储路径
                 String coverPath = saveFilePath + coverFileName;
 
                 // 获取视频 或者 图片资源 封面
-                fileUtils.writeCover(resourcePath,coverPath);
+                String resourceType = fileUtils.writeCover(resourcePath,coverPath);
 
                 // 压缩封面
                 Thumbnails.of(coverPath).scale(1).toFile(coverPath);
@@ -89,11 +91,11 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
                 String userName = (String) request.getAttribute("userName");
                 tResource.setResourceId(null);
                 tResource.setTitle(titles.get(i));
-                tResource.setCoverPath(coverFileName);
+                tResource.setCoverPath(prefixUrl + coverFileName);
                 tResource.setVisibleFlag(true);
                 tResource.setCreateBy(userName);
                 tResource.setCreateTime(new Date());
-                tResource.setResourcePath(resourcePath);
+                tResource.setResourceType(resourceType);
                 this.save(tResource);
             }
         } catch (IOException e) {
@@ -137,6 +139,8 @@ public class TResourceServiceImpl extends ServiceImpl<TResourceMapper, TResource
      */
     public List<String> lodingTitle(TResource tResource,MultipartFile[] resource){
         // 只验证类型为1的本地上传资源类型包括视频类型
+        titles = new ArrayList();
+        bedUrl = new ArrayList();
         if (tResource.getSourceType().equals("1")){
             localUploadSubffix(resource);
             // 处理资源标题
